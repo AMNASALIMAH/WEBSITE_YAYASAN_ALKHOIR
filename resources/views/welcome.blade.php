@@ -99,7 +99,7 @@
     });
 
     function loadLatestNews() {
-        fetch('/teachers/data')
+        fetch('/admin/news/latest')
             .then(response => response.json())
             .then(news => {
                 const newsSection = document.getElementById('news-section');
