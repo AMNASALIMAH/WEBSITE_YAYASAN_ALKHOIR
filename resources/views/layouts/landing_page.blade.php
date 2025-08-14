@@ -30,7 +30,11 @@
     </header>
 
     <main class="flex-1 ">
-        {{ $slot }}
+        @isset($slot)
+            {{ $slot }}
+        @else
+            @yield('content')
+        @endisset
     </main>
 
     @if (Route::has('login'))

@@ -20,22 +20,21 @@
 
                     <a href="{{ url('/') }}"
                         class="px-3 py-1.5 font-bold hover:bg-white hover:text-blue-900 rounded transition">Beranda</a>
-                    {{-- Dropdown Tentang Kami (Hover) --}}
-                    {{-- Dropdown Tentang Kami (Hover) --}}
-                    <div class="relative group">
-                        <div
-                            class="px-3 py-1.5 font-bold hover:bg-white hover:text-blue-900 rounded transition flex items-center gap-1 cursor-pointer">
+                    {{-- Dropdown Tentang Kami (Click) --}}
+                    <div class="relative" data-dropdown>
+                        <button type="button"
+                            class="px-3 py-1.5 font-bold hover:bg-white hover:text-blue-900 rounded transition flex items-center gap-1 cursor-pointer" data-toggle>
                             Tentang Kami
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-4 h-4 transform transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20" data-arrow>
                                 <path fill-rule="evenodd"
                                     d="M5.23 7.21a.75.75 0 011.06.02L10 11.292l3.71-4.06a.75.75 0 111.1 1.02l-4.25 4.66a.75.75 0 01-1.1 0l-4.25-4.66a.75.75 0 01.02-1.06z"
                                     clip-rule="evenodd" />
                             </svg>
-                        </div>
+                        </button>
 
                         {{-- Dropdown Menu --}}
                         <div
-                            class="absolute top-full left-0 mt-2 w-52 bg-white text-blue-900 rounded-lg shadow-lg z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-300">
+                            class="absolute top-full left-0 mt-2 w-52 bg-white text-blue-900 rounded-lg shadow-lg z-50 hidden transition duration-300" data-menu>
                             <a href="{{ route('sejarah') }}"
                                 class="block px-4 py-2 hover:bg-blue-100 font-semibold border-b">Sejarah
                                 Singkat</a>
@@ -48,20 +47,21 @@
                         </div>
                     </div>
 
-                    <div class="relative group">
-                        <div
-                            class="px-3 py-1.5 font-bold hover:bg-white hover:text-blue-900 rounded transition flex items-center gap-1 cursor-pointer">
+                    {{-- Dropdown Program (Click) --}}
+                    <div class="relative" data-dropdown>
+                        <button type="button"
+                            class="px-3 py-1.5 font-bold hover:bg-white hover:text-blue-900 rounded transition flex items-center gap-1 cursor-pointer" data-toggle>
                             Program
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-4 h-4 transform transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20" data-arrow>
                                 <path fill-rule="evenodd"
                                     d="M5.23 7.21a.75.75 0 011.06.02L10 11.292l3.71-4.06a.75.75 0 111.1 1.02l-4.25 4.66a.75.75 0 01-1.1 0l-4.25-4.66a.75.75 0 01.02-1.06z"
                                     clip-rule="evenodd" />
                             </svg>
-                        </div>
+                        </button>
 
                         {{-- Dropdown Menu --}}
                         <div
-                            class="absolute top-full left-0 mt-2 w-52 bg-white text-blue-900 rounded-lg shadow-lg z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-300">
+                            class="absolute top-full left-0 mt-2 w-52 bg-white text-blue-900 rounded-lg shadow-lg z-50 hidden transition duration-300" data-menu>
                             <a href="{{ route('SDT') }}" class="block px-4 py-2 hover:bg-blue-100 font-semibold border-b">SD
                                 Tahfidz Al-Khoir</a>
                             <a href="{{ route('RTQ') }}" class="block px-4 py-2 hover:bg-blue-100 font-semibold border-b">RTQ
@@ -72,20 +72,22 @@
                                 Al-Khoir</a>
                         </div>
                     </div>
-                    <div class="relative group">
-                        <div
-                            class="px-3 py-1.5 font-bold hover:bg-white hover:text-blue-900 rounded transition flex items-center gap-1 cursor-pointer">
+
+                    {{-- Dropdown Informasi Lainnya (Click) --}}
+                    <div class="relative" data-dropdown>
+                        <button type="button"
+                            class="px-3 py-1.5 font-bold hover:bg-white hover:text-blue-900 rounded transition flex items-center gap-1 cursor-pointer" data-toggle>
                             Informasi Lainnya
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-4 h-4 transform transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20" data-arrow>
                                 <path fill-rule="evenodd"
                                     d="M5.23 7.21a.75.75 0 011.06.02L10 11.292l3.71-4.06a.75.75 0 111.1 1.02l-4.25 4.66a.75.75 0 01-1.1 0l-4.25-4.66a.75.75 0 01.02-1.06z"
                                     clip-rule="evenodd" />
                             </svg>
-                        </div>
+                        </button>
 
                         {{-- Dropdown Menu --}}
                         <div
-                            class="absolute top-full left-0 mt-2 w-52 bg-white text-blue-900 rounded-lg shadow-lg z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-300">
+                            class="absolute top-full left-0 mt-2 w-52 bg-white text-blue-900 rounded-lg shadow-lg z-50 hidden transition duration-300" data-menu>
                             <a href="{{ route('berita') }}"
                                 class="block px-4 py-2 hover:bg-blue-100 font-semibold border-b">Berita</a>
                             <a href="{{ route('daftar_pmb') }}"
@@ -153,6 +155,67 @@
             const authMobile = document.getElementById('mobile-auth');
             navMenu.classList.toggle('hidden');
             authMobile.classList.toggle('hidden');
+        });
+
+        // Dropdown functionality for desktop navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const nav = document.querySelector('nav');
+            if (!nav) return;
+
+            // Close all dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!nav.contains(e.target)) {
+                    nav.querySelectorAll('[data-menu]').forEach(function(menu) {
+                        menu.classList.add('hidden');
+                    });
+                    nav.querySelectorAll('[data-arrow]').forEach(function(arrow) {
+                        arrow.classList.remove('rotate-180');
+                    });
+                }
+            });
+
+            // Toggle dropdowns on click
+            nav.querySelectorAll('[data-dropdown]').forEach(function(container) {
+                const toggle = container.querySelector('[data-toggle]');
+                const menu = container.querySelector('[data-menu]');
+                const arrow = toggle ? toggle.querySelector('[data-arrow]') : null;
+                
+                if (!toggle || !menu) return;
+
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Close other dropdowns
+                    nav.querySelectorAll('[data-menu]').forEach(function(otherMenu) {
+                        if (otherMenu !== menu) {
+                            otherMenu.classList.add('hidden');
+                        }
+                    });
+                    nav.querySelectorAll('[data-arrow]').forEach(function(otherArrow) {
+                        if (otherArrow !== arrow) {
+                            otherArrow.classList.remove('rotate-180');
+                        }
+                    });
+
+                    // Toggle current dropdown
+                    const isHidden = menu.classList.contains('hidden');
+                    if (isHidden) {
+                        menu.classList.remove('hidden');
+                        if (arrow) arrow.classList.add('rotate-180');
+                    } else {
+                        menu.classList.add('hidden');
+                        if (arrow) arrow.classList.remove('rotate-180');
+                    }
+                });
+            });
+
+            // Keep dropdowns open when clicking inside them
+            nav.querySelectorAll('[data-menu]').forEach(function(menu) {
+                menu.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
         });
     </script>
 @endif

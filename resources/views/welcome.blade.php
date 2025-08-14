@@ -74,26 +74,158 @@
     {{-- Berita Kegiatan --}}
     <div class="mt-20 mb-24 w-full px-4 md:px-8">
         <h2 class="text-2xl font-bold mt-5 mb-10 text-center">Berita Kegiatan Yayasan Al-Khoir</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-20 ">
-            @for ($i = 0; $i < 3; $i++)
-                <div class="bg-white shadow rounded-lg overflow-hidden">
-                    <img src="{{ asset('assets/images/background.png') }}" alt="Berita"
-                        class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <p class="text-sm text-gray-500 mb-1">19, Juni 2025</p>
-                        <h3 class="text-md font-bold mb-2">Kegiatan Ujian Tahfidz Tengah semester</h3>
-                        <p class="text-xs text-gray-600 mb-2">#BeritaRQTAl-Khoir</p>
-                        <a href="#" class="text-sm font-semibold text-pink-600 hover:underline">Selengkapnya</a>
-                    </div>
-                </div>
-            @endfor
+        <div id="news-section" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- News cards will be loaded here dynamically -->
+            <div class="col-span-full text-center py-12">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                <p class="mt-4 text-gray-600">Memuat berita terbaru...</p>
+            </div>
         </div>
         <div class="text-center mt-10">
-            <a href="{{ route('berita') }}"
-                class="border border-blue-900 text-black font-bold px-6 py-2 rounded-md hover:bg-blue-900 hover:text-white transition">Berita
-                Lainnya</a>
+            <a href="{{ route('news.index') }}"
+                class="inline-flex items-center px-6 py-3 border border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-105 shadow-lg">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 002-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                </svg>
+                Lihat Semua Berita
+            </a>
         </div>
     </div>
+
+    <script>
+    // Load latest news on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadLatestNews();
+    });
+
+    function loadLatestNews() {
+        fetch('/teachers/data')
+            .then(response => response.json())
+            .then(news => {
+                const newsSection = document.getElementById('news-section');
+                
+                if (news.length === 0) {
+                    newsSection.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 002-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                            </svg>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada berita</h3>
+                            <p class="text-gray-500">Berita akan muncul di sini setelah admin menambahkan konten.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const newsHTML = news.map(item => `
+                    <article class="group bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-gray-100">
+                        <div class="relative overflow-hidden">
+                            <img src="${item.gambar ? '/storage/' + item.gambar : '{{ asset('assets/images/background.png') }}'}" 
+                                 alt="${item.judul}"
+                                 class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700">
+                            <div class="absolute top-4 left-4">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 backdrop-blur-sm">
+                                    ${item.kategori}
+                                </span>
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="flex items-center text-sm text-gray-500 mb-3">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                ${new Date(item.tanggal_terbit).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            </div>
+                            
+                            <h3 class="text-lg font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
+                                ${item.judul}
+                            </h3>
+                            
+                            ${item.ringkasan ? `<p class="text-gray-600 mb-4 line-clamp-2">${item.ringkasan}</p>` : ''}
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    ${item.penulis}
+                                </div>
+                                
+                                <a href="/news/${item.slug}" 
+                                   class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium transition-all duration-300 group-hover:translate-x-1">
+                                    Baca Selengkapnya
+                                    <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                `).join('');
+
+                newsSection.innerHTML = newsHTML;
+            })
+            .catch(error => {
+                console.error('Error loading news:', error);
+                const newsSection = document.getElementById('news-section');
+                newsSection.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <svg class="w-16 h-16 text-red-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Gagal memuat berita</h3>
+                        <p class="text-gray-500">Terjadi kesalahan saat memuat berita terbaru.</p>
+                    </div>
+                `;
+            });
+    }
+    </script>
+
+    <style>
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Smooth animations for news cards */
+    article {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    article:nth-child(1) { animation-delay: 0.1s; }
+    article:nth-child(2) { animation-delay: 0.2s; }
+    article:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Hover effects */
+    article:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Image zoom effect */
+    article img {
+        transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    article:hover img {
+        transform: scale(1.1);
+    }
+    </style>
 
     @php
         $galeri = [
