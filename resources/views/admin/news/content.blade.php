@@ -9,12 +9,26 @@
                 <input id="news-search" type="text" class="peer ps-9 pe-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64" placeholder="Cari berita..." oninput="filterTable('news-search','news-tbody')">
          
             </div>
-            <button class=" px-4 py-2 rounded-lg flex items-center gap-2 shadow-sm transition-all duration-200 transform hover:scale-105" onclick="openNewsModal()">
+            <button 
+                class="px-4 py-2 rounded-lg flex items-center gap-2 shadow-sm transition-all duration-200 transform hover:scale-105" 
+                type="button"
+                id="add-news-btn"
+            >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
                 <span class="text-black">Tambah Berita</span>
             </button>
+            <script>
+                document.getElementById('add-news-btn').addEventListener('click', function() {
+                    // Replace this with your modal opening logic
+                    if (typeof openNewsModal === 'function') {
+                        openNewsModal();
+                    } else {
+                        alert('Fungsi openNewsModal() belum didefinisikan.');
+                    }
+                });
+            </script>
         </div>
     </div>
 
