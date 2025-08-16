@@ -16,6 +16,10 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
+require __DIR__.'/student.php';
+require __DIR__.'/finance.php';
+require __DIR__.'/admin.php';
+require __DIR__.'/program.php';
 
 
 
@@ -40,13 +44,12 @@ Route::match(['PUT', 'POST'], '/admin/teachers/{id}', [TeacherController::class,
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/management/profile/content', [DashboardController::class, 'getManagementProfileContent'])->name('admin.management.profile.content');
     Route::get('/admin/management/teachers/content', [DashboardController::class, 'getManagementTeachersContent'])->name('admin.management.teachers.content');
-    Route::get('/admin/management/students/content', [DashboardController::class, 'getManagementStudentsContent'])->name('admin.management.students.content');
-    Route::get('/admin/management/finance/content', [DashboardController::class, 'getManagementFinanceContent'])->name('admin.management.finance.content');
+
     Route::get('/admin/management/account/content', [DashboardController::class, 'getManagementAccountContent'])->name('admin.management.account.content');
     Route::get('/admin/management/messages/content', [DashboardController::class, 'getManagementMessagesContent'])->name('admin.management.messages.content');
     Route::get('/admin/management/applications/content', [DashboardController::class, 'getManagementApplicationsContent'])->name('admin.management.applications.content');
-    Route::get('/admin/management/admin-accounts/content', [DashboardController::class, 'getManagementAdminAccountsContent'])->name('admin.management.admin_accounts.content');
-    Route::get('/admin/management/programs/content', [DashboardController::class, 'getManagementProgramsContent'])->name('admin.management.programs.content');
+   
+    
 });
 
 // Pretty URLs that render the admin shell and auto-load the correct content

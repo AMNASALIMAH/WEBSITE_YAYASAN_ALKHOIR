@@ -23,6 +23,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             NewsSeeder::class,
             TeacherSeeder::class,
+            FinanceIncomeSeeder::class,
+            FinanceExpenseSeeder::class,
+            FinanceSppSettingSeeder::class,
+            ProgramSeeder::class,
         ]);
     }
 }

@@ -1,5 +1,5 @@
 <!-- Sidebar Utama -->
-<aside class="w-56 min-h-screen bg-blue-950 text-white flex flex-col px-2 pt-1 pb-6 overflow-y-auto">
+<aside id="admin-sidebar" class="w-64 min-h-screen bg-blue-950 text-white flex flex-col px-2 pt-1 pb-6 overflow-y-auto flex-shrink-0 relative z-10 max-w-none">
     {{-- Logo --}}
     <div class="flex items-center space-x-3">
         <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="h-10 w-10 rounded" />
@@ -13,7 +13,7 @@
     {{-- Garis pembatas --}}
     <div class="border-b border-gray-300 mt-3 mb-4 w-full"></div>
 
-    <nav class="space-y-2 text-sm">
+    <nav class="space-y-2 text-sm flex-1">
 
         <a href="{{ route('dashboard') }}"
             class="flex  items-center gap-2 font-semibold  text-white hover:bg-white hover:text-blue-950">
@@ -144,11 +144,11 @@
                 @mouseleave="open = true"
             >
                 <a href="#" onclick="loadContent('mgmt-profile')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">🏛️ Profil Yayasan</a>
+          
                 <div x-data="{ open: false }">
                     <button @click="open = !open"
-                        class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950">
-                        <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
-                            x-bind:class="open ? 'rotate-90' : ''" />👨‍🏫 Data Guru
+                        class="flex items-center gap-2 w-full text-left font-semibold  text-white hover:bg-white hover:text-blue-950">
+                        <span class="ml-1">▶️</span> 🗂️ Kategori Class
                     </button>
                     <div 
                         x-show="open" 
@@ -158,31 +158,55 @@
                         @mouseenter="open = true" 
                         @mouseleave="open = true"
                     >
-                        <a href="#" onclick="loadContent('mgmt-teachers')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📋 Daftar Guru</a>
-                        <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">➕ Tambah Guru</a>
-                        <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">🗂️ Riwayat / Arsip</a>
+                    <div x-data="{ open: false }">
+                        <button @click="open = !open"
+                            class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950">
+                            <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
+                                x-bind:class="open ? 'rotate-90' : ''" />👨‍🏫 Data Guru
+                        </button>
+                        <div 
+                            x-show="open" 
+                            x-transition 
+                            @click.away="open = false"
+                            class="ml-4 space-y-1"
+                            @mouseenter="open = true" 
+                            @mouseleave="open = true"
+                        >
+                            <a href="#" onclick="loadContent('mgmt-teachers')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📋 Daftar Guru</a>
+                            <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">🏫 Kelas Guru</a>
+                        </div>
                     </div>
-                </div>
-                <div x-data="{ open: false }">
-                    <button @click="open = !open"
-                        class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950">
-                        <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
-                            x-bind:class="open ? 'rotate-90' : ''" />👨‍🎓 Data Santri
-                    </button>
-                    <div 
-                        x-show="open" 
-                        x-transition 
-                        @click.away="open = false"
-                        class="ml-4 space-y-1"
-                        @mouseenter="open = true" 
-                        @mouseleave="open = true"
-                    >
-                        <a href="#" onclick="loadContent('mgmt-students')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📋 Daftar Santri</a>
-                        <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">➕ Tambah Santri</a>
-                        <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">🏫 Kelas / Tingkatan</a>
-                        <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">📦 Alumni / Keluar</a>
+    
+
+                    <div x-data="{ open: false }">
+                        <button @click="open = !open"
+                            class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950">
+                            <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
+                                x-bind:class="open ? 'rotate-90' : ''" />👨‍🎓 Data Santri
+                        </button>
+                        <div 
+                            x-show="open" 
+                            x-transition 
+                            @click.away="open = false"
+                            class="ml-4 space-y-1"
+                            @mouseenter="open = true" 
+                            @mouseleave="open = true"
+                        >
+                            <a href="#" onclick="loadContent('mgmt-students')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📋 Daftar Santri</a>
+                            <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">➕ Tambah Santri</a>
+                            <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">🏫 Kelas / Tingkatan</a>
+                            <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">📦 Alumni / Keluar</a>
+                        </div>
                     </div>
+                    </div>
+
+                    
+
+                    
+                    
                 </div>
+
+         
                 <div x-data="{ open: false }">
                     <button @click="open = !open"
                         class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950">
@@ -198,9 +222,8 @@
                         @mouseleave="open = true"
                     >
                         <a href="#" onclick="loadContent('mgmt-finance')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📊 Laporan Keuangan</a>
-                        <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">➕ Tambah Transaksi</a>
-                        <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">🗂️ Riwayat Transaksi</a>
-                        <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">⚙️ Kategori & Pengaturan</a>
+                        <a href="#" onclick="loadContent('mgmt-finance-pemasukan')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">💵 Pemasukan</a>
+                        <a href="#" onclick="loadContent('mgmt-finance-pengeluaran')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">💸 Pengeluaran</a>
                     </div>
                 </div>
                 <a href="#" onclick="loadContent('mgmt-account')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">👤 Perbarui Akun Profil</a>

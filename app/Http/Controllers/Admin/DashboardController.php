@@ -29,15 +29,9 @@ class DashboardController extends Controller
         return view('admin.management.teachers');
     }
 
-    public function getManagementStudentsContent()
-    {
-        return view('admin.management.students');
-    }
 
-    public function getManagementFinanceContent()
-    {
-        return view('admin.management.finance');
-    }
+
+
 
     public function getManagementAccountContent()
     {
@@ -54,13 +48,7 @@ class DashboardController extends Controller
         return view('admin.management.applications');
     }
 
-    public function getManagementAdminAccountsContent()
-    {
-        return view('admin.management.admin_accounts');
-    }
+  
 
-    public function getManagementProgramsContent()
-    {
-        return view('admin.management.programs');
-    }
+
 }
