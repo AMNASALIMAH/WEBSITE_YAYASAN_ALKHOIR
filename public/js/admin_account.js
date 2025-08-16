@@ -1,6 +1,12 @@
 // Admin Accounts Management JavaScript
 class AdminAccountsManager {
     constructor() {
+        // Prevent multiple instances
+        if (window.adminAccountsManager) {
+            console.log('AdminAccountsManager already exists, returning existing instance');
+            return window.adminAccountsManager;
+        }
+        
         this.currentPage = 1;
         this.itemsPerPage = 10;
         this.totalItems = 0;
@@ -20,13 +26,15 @@ class AdminAccountsManager {
         };
 
         this.init();
+        
+        // Store instance globally
+        window.adminAccountsManager = this;
     }
 
     init() {
         this.checkAuthentication();
         this.bindEvents();
-        this.loadAdminAccounts();
-        this.setupSearchAndFilter();
+        this.loadData();
     }
 
     checkAuthentication() {
@@ -95,7 +103,7 @@ class AdminAccountsManager {
         };
     }
 
-    async loadAdminAccounts() {
+    async loadData() {
         try {
             this.showLoading(true);
 
@@ -500,7 +508,7 @@ class AdminAccountsManager {
             if (result.success) {
                 this.showToast('success', result.message);
                 this.closeModal();
-                this.loadAdminAccounts();
+                this.loadData();
             } else {
                 this.showToast('error', result.message || 'Gagal menyimpan data');
             }
@@ -562,7 +570,7 @@ class AdminAccountsManager {
             if (result.success) {
                 this.showToast('success', result.message);
                 this.closeDeleteModal();
-                this.loadAdminAccounts();
+                this.loadData();
             } else {
                 this.showToast('error', result.message || 'Gagal menghapus akun');
             }
@@ -652,7 +660,7 @@ class AdminAccountsManager {
             if (result.success) {
                 this.showToast('success', result.message);
                 this.clearSelection();
-                this.loadAdminAccounts();
+                this.loadData();
             } else {
                 this.showToast('error', result.message || 'Gagal menghapus akun');
             }
@@ -720,13 +728,75 @@ class AdminAccountsManager {
     hideToast() {
         document.getElementById('toast').classList.add('hidden');
     }
+
+    // Cleanup method to prevent memory leaks
+    cleanup() {
+        // Remove event listeners
+        if (this.searchInput) {
+            this.searchInput.removeEventListener('input', this.debouncedSearch);
+        }
+        if (this.roleFilter) {
+            this.roleFilter.removeEventListener('change', this.handleFilterChange);
+        }
+        if (this.statusFilter) {
+            this.statusFilter.removeEventListener('change', this.handleFilterChange);
+        }
+        
+        // Clear intervals and timeouts
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+        }
+        
+        // Reset state
+        this.selectedItems.clear();
+        this.currentPage = 1;
+        this.filteredData = [];
+        this.currentUserId = null;
+        this.isEditMode = false;
+    }
 }
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Check if we're on the admin accounts page
     if (document.querySelector('[data-content="mgmt-admin-accounts"]')) {
-        window.adminAccountsManager = new AdminAccountsManager();
+        // Only initialize if not already initialized
+        if (!window.adminAccountsManager) {
+            console.log('Initializing AdminAccountsManager on DOMContentLoaded...');
+            window.adminAccountsManager = new AdminAccountsManager();
+        } else {
+            console.log('AdminAccountsManager already exists, skipping initialization...');
+        }
+    }
+});
+
+// Also initialize when content is loaded via AJAX
+if (typeof window.initializeMainContentUI === 'function') {
+    const originalInitializeMainContentUI = window.initializeMainContentUI;
+    window.initializeMainContentUI = function() {
+        // Call original function
+        originalInitializeMainContentUI();
+        
+        // Check if we need to initialize admin accounts manager
+        if (document.querySelector('[data-content="mgmt-admin-accounts"]')) {
+            // Clean up existing instance if it exists
+            if (window.adminAccountsManager) {
+                console.log('Cleaning up existing AdminAccountsManager...');
+                window.adminAccountsManager.cleanup();
+                window.adminAccountsManager = null;
+            }
+            // Create new instance
+            console.log('Initializing new AdminAccountsManager after AJAX load...');
+            window.adminAccountsManager = new AdminAccountsManager();
+        }
+    };
+}
+
+// Cleanup when navigating away
+window.addEventListener('beforeunload', function() {
+    if (window.adminAccountsManager) {
+        console.log('Cleaning up AdminAccountsManager on page unload...');
+        window.adminAccountsManager.cleanup();
     }
 });
 

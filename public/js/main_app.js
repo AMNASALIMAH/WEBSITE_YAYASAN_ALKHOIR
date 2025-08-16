@@ -292,6 +292,31 @@ function showToast(message, theme = 'success') {
 function loadContent(type) {
     const mainContent = document.getElementById('main-content');
     
+    // Prevent multiple simultaneous loading operations
+    if (window.isLoadingContent) {
+        console.log('Content loading already in progress, skipping...');
+        return;
+    }
+    
+    // Check if we're already on the requested content
+    if (isAlreadyOnContent(type)) {
+        console.log(`Already on content type: ${type}, skipping...`);
+        return;
+    }
+    
+    window.isLoadingContent = true;
+    
+    // Add timeout to reset loading flag in case something goes wrong
+    setTimeout(() => {
+        if (window.isLoadingContent) {
+            console.log('Content loading timeout, resetting flag...');
+            window.isLoadingContent = false;
+        }
+    }, 10000); // 10 second timeout
+    
+    // Clean up existing content before loading new content
+    cleanupMainContent();
+    
     // Show loading state
     mainContent.innerHTML = `
         <div class="flex items-center justify-center h-64">
@@ -381,17 +406,17 @@ function loadContent(type) {
                 });
             break;
         case 'mgmt-students':
-            fetch('/admin/management/students/content')
-                .then(response => response.text())
-                .then(html => {
-                    mainContent.innerHTML = html;
-                    initializeMainContentUI();
-                    // Execute any inline scripts from the loaded fragment
-                    runScriptsFrom(mainContent);
-                    history.pushState({content: 'mgmt-students'}, 'Data Santri', '/admin/management/students');
-                    // Content loaded successfully - no additional initialization needed
-                    console.log('Students management content loaded successfully');
-                })
+            fetch('/admin/management/data-santri/content')
+            .then(response => response.text())
+            .then(html => {
+                mainContent.innerHTML = html;
+                initializeMainContentUI();
+                history.pushState(
+                    {content: 'mgmt-students'},
+                    'Data Santri',
+                    '/admin/management/data-santri/content'
+                );
+            })
                 .catch(error => {
                     console.error('Error loading content:', error);
                     mainContent.innerHTML = `
@@ -453,12 +478,13 @@ function loadContent(type) {
                 });
             break;
         case 'mgmt-account':
-            fetch('/admin/management/account/content')
+            fetch('/admin/management/admin-accounts/content')
                 .then(response => response.text())
                 .then(html => {
                     mainContent.innerHTML = html;
                     initializeMainContentUI();
-                    history.pushState({content: 'mgmt-account'}, 'Akun Profil', '/admin/management/account');
+                    history.pushState({content: 'mgmt-account'}, 'Akun Profil', '/admin/management/admin-accounts');
+                    window.isLoadingContent = false;
                 })
                 .catch(error => {
                     console.error('Error loading content:', error);
@@ -467,6 +493,7 @@ function loadContent(type) {
                             <p class="text-red-700">Error loading content. Please try again.</p>
                         </div>
                     `;
+                    window.isLoadingContent = false;
                 });
             break;
         case 'mgmt-messages':
@@ -504,20 +531,26 @@ function loadContent(type) {
                 });
             break;
         case 'mgmt-admin-accounts':
-            fetch('admin/management/admin-accounts/content')
+            fetch('/admin/management/admin-accounts/content')
                 .then(response => response.text())
                 .then(html => {
                     mainContent.innerHTML = html;
                     initializeMainContentUI();
-                    history.pushState({content: 'mgmt-admin-accounts'}, 'Data Akun Pengurus', 'admin/management/admin-accounts/content');
+                    history.pushState(
+                        {content: 'mgmt-admin-accounts'},
+                        'Data Akun Pengurus',
+                        '/admin/management/admin-accounts'
+                    );
+                    window.isLoadingContent = false;
                 })
                 .catch(error => {
                     console.error('Error loading content:', error);
                     mainContent.innerHTML = `
-                        <div class=\"bg-red-50 border border-red-200 rounded-lg p-4\">
-                            <p class=\"text-red-700\">Error loading content. Please try again.</p>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <p class="text-red-700">Error loading content. Please try again.</p>
                         </div>
                     `;
+                    window.isLoadingContent = false;
                 });
             break;
         
@@ -543,14 +576,86 @@ function loadContent(type) {
     }
 }
 
+// Function to check if we're already on the requested content
+function isAlreadyOnContent(type) {
+    const mainContent = document.getElementById('main-content');
+    if (!mainContent) return false;
+    
+    // Check for specific content types
+    if (type === 'mgmt-admin-accounts' || type === 'mgmt-account') {
+        return mainContent.querySelector('#admin-accounts-content') !== null;
+    }
+    
+    // General check for other content types
+    const existingContent = mainContent.querySelector('[data-content]');
+    return existingContent && existingContent.getAttribute('data-content') === type;
+}
+
+// Function to clean up duplicate sidebars
+function cleanupDuplicateSidebars() {
+    // Remove duplicate sidebar containers
+    const sidebarContainers = document.querySelectorAll('.sidebar-container');
+    if (sidebarContainers.length > 1) {
+        console.log('Duplicate sidebar containers detected, removing extras...');
+        for (let i = 1; i < sidebarContainers.length; i++) {
+            sidebarContainers[i].remove();
+        }
+    }
+    
+    // Remove duplicate sidebars
+    const sidebars = document.querySelectorAll('#admin-sidebar');
+    if (sidebars.length > 1) {
+        console.log('Duplicate sidebars detected, removing extras...');
+        for (let i = 1; i < sidebars.length; i++) {
+            sidebars[i].remove();
+        }
+    }
+    
+    // Ensure only one sidebar wrapper exists
+    const sidebarWrappers = document.querySelectorAll('#sidebar-wrapper');
+    if (sidebarWrappers.length > 1) {
+        console.log('Duplicate sidebar wrappers detected, removing extras...');
+        for (let i = 1; i < sidebarWrappers.length; i++) {
+            sidebarWrappers[i].remove();
+        }
+    }
+}
+
+// Function to clean up main content before loading new content
+function cleanupMainContent() {
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+        // Remove any existing content
+        mainContent.innerHTML = '';
+        
+        // Clean up any existing event listeners or references
+        if (window.adminAccountsManager) {
+            window.adminAccountsManager.cleanup();
+            window.adminAccountsManager = null;
+        }
+    }
+}
+
 // Handle browser back/forward buttons
 window.addEventListener('popstate', function(event) {
     if (event.state && event.state.content) {
+        // Check if we're already on the same content type
+        if (isAlreadyOnContent(event.state.content)) {
+            console.log('Already on the same content type, skipping...');
+            return;
+        }
         loadContent(event.state.content);
     }
 });
 
 // Load initial content if provided by server (pretty URLs)
 document.addEventListener('DOMContentLoaded', function() {
+    // Check if content is already loaded
+    if (document.querySelector('[data-content]')) {
+        console.log('Content already loaded, skipping initial content loading...');
+        return;
+    }
+    
     // Initial content loading is handled in the Blade template
+    // The initialContent variable is set by the server and will be handled by the template
 });

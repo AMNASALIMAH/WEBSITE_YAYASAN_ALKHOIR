@@ -16,9 +16,8 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-require __DIR__.'/student.php';
-require __DIR__.'/finance.php';
 require __DIR__.'/admin.php';
+require __DIR__.'/finance.php';
 require __DIR__.'/program.php';
 
 

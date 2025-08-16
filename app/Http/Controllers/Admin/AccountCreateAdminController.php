@@ -20,7 +20,9 @@ class AccountCreateAdminController extends Controller
      */
     public function getManagementAdminAccountsContent()
     {
-        return view('admin.management.admin_account.admin_accounts');
+        // Load all admin accounts data
+        $users = User::orderBy('created_at', 'desc')->get();
+        return view('admin.management.admin_account.admin_accounts', ['users' => $users]);
     }
 
     /**
