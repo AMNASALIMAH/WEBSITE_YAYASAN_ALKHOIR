@@ -51,240 +51,262 @@
 
             <nav class="space-y-2 text-sm flex-1">
 
-                <a href="{{ route('dashboard') }}"
-                    class="flex  items-center gap-2 font-semibold  text-white hover:bg-white hover:text-blue-950">
+                <a href=""
+                    class="flex items-center gap-2 font-semibold text-white hover:bg-white hover:text-blue-950">
                     <x-heroicon-o-home class="w-4 h-4" /> Dashboard
                 </a>
 
                 <!-- Master Data untuk publik-->
-                <div x-data="{ open: false }">
-                    <button @click="open = !open"
-                        class="flex items-center gap-2 w-full text-left font-semibold  text-white hover:bg-white hover:text-blue-950">
+                <div>
+                    <button type="button"
+                        class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950"
+                        onclick="toggleMenu('yayasanMenu', 'yayasanChevron')">
                         <x-heroicon-o-folder class="w-4 h-4" /> Data Info Yayasan
-                        <x-heroicon-o-chevron-down class="ml-1 w-4 h-4 transform"
-                            x-bindx-bind:class="open ? 'rotate-180' : ''" />
+                        <x-heroicon-o-chevron-down id="yayasanChevron" class="ml-1 w-4 h-4 transform transition-transform" />
                     </button>
 
                     <div 
-                        x-show="open" 
-                        x-transition 
-                        @click.away="open = false" 
-                        class="ml-4 space-y-1 mt-2"
-                        @mouseenter="open = true" 
-                        @mouseleave="open = true"
+                        id="yayasanMenu"
+                        class="ml-4 space-y-1 mt-2 hidden"
+                        onmouseenter="openMenu('yayasanMenu', 'yayasanChevron')" 
+                        onmouseleave="openMenu('yayasanMenu', 'yayasanChevron')"
                     >
                         <!-- Tentang Kami -->
-                        <div x-data="{ open: false }">
-                            <button @click="open = !open"
-                                class="flex items-center gap-2 w-full text-left font-semibold  text-white hover:bg-white hover:text-blue-950">
-                                <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
-                                    x-bind:class="open ? 'rotate-90' : ''" />
+                        <div>
+                            <button type="button"
+                                class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950"
+                                onclick="toggleMenu('tentangKamiMenu', 'tentangKamiChevron')">
+                                <x-heroicon-o-chevron-right id="tentangKamiChevron" class="ml-1 w-4 h-4 transform transition-transform" />
                                 <x-heroicon-o-building-library class="w-4 h-4" /> Tentang Kami
                             </button>
                             <div 
-                                x-show="open" 
-                                x-transition 
-                                @click.away="open = false"
-                                class="ml-4 space-y-1"
-                                @mouseenter="open = true" 
-                                @mouseleave="open = true"
-                            >
-                                <a href="{{ route('admin.sejarah.index') }}" class="block font-semibold  text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.sejarah.*') ? 'bg-gray-200' : '' }}">📖
+                                id="tentangKamiMenu"
+                                class="ml-4 space-y-1 hidden"
+                                onmouseenter="openMenu('tentangKamiMenu', 'tentangKamiChevron')" 
+                                onmouseleave="openMenu('tentangKamiMenu', 'tentangKamiChevron')">
+                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.sejarah.*') ? 'bg-gray-200' : '' }}">📖
                                     Sejarah</a>
-                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">🎯
+                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.visimisi.*') ? 'bg-gray-200' : '' }}">🎯
                                     Visi-Misi & Tujuan</a>
-                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">👥
+                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.struktur.*') ? 'bg-gray-200' : '' }}">👥
                                     Struktur</a>
                             </div>
                         </div>
 
                         <!-- Program -->
-                        <div x-data="{ open: false }">
-                            <button @click="open = !open"
-                                class="flex items-center gap-2 w-full text-left font-semibold  text-white hover:bg-white hover:text-blue-950">
-                                <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
-                                    x-bind:class="open ? 'rotate-90' : ''" />
+                        <div>
+                            <button type="button"
+                                class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950"
+                                onclick="toggleMenu('programMenu', 'programChevron')">
+                                <x-heroicon-o-chevron-right id="programChevron" class="ml-1 w-4 h-4 transform transition-transform" />
                                 <x-heroicon-o-book-open class="w-4 h-4" /> Program
                             </button>
                             <div 
-                                x-show="open" 
-                                x-transition 
-                                @click.away="open = false"
-                                class="ml-4 space-y-1"
-                                @mouseenter="open = true" 
-                                @mouseleave="open = true"
+                                id="programMenu"
+                                class="ml-4 space-y-1 hidden"
+                                onmouseenter="openMenu('programMenu', 'programChevron')" 
+                                onmouseleave="openMenu('programMenu', 'programChevron')"
                             >
-                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">🏷️
+                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.program.categories.*') ? 'bg-gray-200' : '' }}">🏷️
                                     Kategori</a>
-                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">📄
+                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.program.index') ? 'bg-gray-200' : '' }}">📄
                                     Daftar</a>
-                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">📝
+                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.program.content.*') ? 'bg-gray-200' : '' }}">📝
                                     Konten</a>
                             </div>
                         </div>
 
                         <!-- Informasi Lainnya -->
-                        <div x-data="{ open: false }">
-                            <button @click="open = !open"
-                                class="flex items-center gap-2 w-full text-left font-semibold  text-white hover:bg-white hover:text-blue-950">
-                                <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
-                                    x-bind:class="open ? 'rotate-90' : ''" />
+                        <div>
+                            <button type="button"
+                                class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950"
+                                onclick="toggleMenu('informasiMenu', 'informasiChevron')">
+                                <x-heroicon-o-chevron-right id="informasiChevron" class="ml-1 w-4 h-4 transform transition-transform" />
                                 <x-heroicon-o-document-text class="w-4 h-4" /> Informasi
-
                             </button>
                             <div 
-                                x-show="open" 
-                                x-transition 
-                                @click.away="open = false"
-                                class="ml-4 space-y-1"
-                                @mouseenter="open = true" 
-                                @mouseleave="open = true"
+                                id="informasiMenu"
+                                class="ml-4 space-y-1 hidden"
+                                onmouseenter="openMenu('informasiMenu', 'informasiChevron')" 
+                                onmouseleave="openMenu('informasiMenu', 'informasiChevron')"
                             >
-                                <a href="#" onclick="loadContent('news')" class="block font-semibold  text-white hover:bg-white hover:text-blue-950 cursor-pointer">🗞️
+                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.berita.*') ? 'bg-gray-200' : '' }}">🗞️
                                     Berita</a>
-                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">📥
+                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.pmb.*') ? 'bg-gray-200' : '' }}">📥
                                     PMB</a>
-                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">📅
+                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.agenda.*') ? 'bg-gray-200' : '' }}">📅
                                     Agenda</a>
-                                <a href="#" onclick="loadContent('galery')" class="block font-semibold  text-white hover:bg-white hover:text-blue-950 cursor-pointer">🖼️
+                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.galeri.*') ? 'bg-gray-200' : '' }}">🖼️
                                     Galeri</a>
                             </div>
-                            
                         </div>
-
-                        <!-- Galeri -->
-                        {{-- <a href="#"
-                            class="flex items-center gap-2 font-semibold  text-white hover:bg-white hover:text-blue-950">
-                            <x-heroicon-o-photo class="w-4 h-4" /> Galeri
-                        </a> --}}
                     </div>
                 </div>
 
                 <!-- Manajemen Data -->
-                <div x-data="{ open: false }">
-                    <button @click="open = !open"
-                        class="flex items-center gap-2 w-full text-left font-semibold  text-white hover:bg-white hover:text-blue-950">
-                        <x-heroicon-o-folder class="w-4 h-4" /> Manejemen Data
-                        <x-heroicon-o-chevron-down class="ml-1 w-4 h-4 transform"
-                            x-bindx-bind:class="open ? 'rotate-180' : ''" />
-
-
+                <div>
+                    <button type="button"
+                        class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950"
+                        onclick="toggleMenu('manajemenMenu', 'manajemenChevron')">
+                        <x-heroicon-o-folder class="w-4 h-4" /> Manajemen Data
+                        <x-heroicon-o-chevron-down id="manajemenChevron" class="ml-1 w-4 h-4 transform transition-transform" />
                     </button>
 
                     <div 
-                        x-show="open" 
-                        x-transition 
-                        @click.away="open = false" 
-                        class="ml-4 space-y-2 mt-2"
-                        @mouseenter="open = true" 
-                        @mouseleave="open = true"
+                        id="manajemenMenu"
+                        class="ml-4 space-y-2 mt-2 hidden"
+                        onmouseenter="openMenu('manajemenMenu', 'manajemenChevron')" 
+                        onmouseleave="openMenu('manajemenMenu', 'manajemenChevron')"
                     >
-                        <a href="#" onclick="loadContent('mgmt-profile')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">🏛️ Profil Yayasan</a>
+                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.profile.*') ? 'bg-gray-200' : '' }}">🏛️ Profil Yayasan</a>
                 
-                        <div x-data="{ open: false }">
-                            <button @click="open = !open"
-                                class="flex items-center gap-2 w-full text-left font-semibold  text-white hover:bg-white hover:text-blue-950">
+                        <div>
+                            <button type="button"
+                                class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950"
+                                onclick="toggleMenu('kategoriClassMenu', 'kategoriClassChevron')">
                                 <span class="ml-1">▶️</span> 🗂️ Kategori Class
                             </button>
                             <div 
-                                x-show="open" 
-                                x-transition 
-                                @click.away="open = false"
-                                class="ml-4 space-y-1"
-                                @mouseenter="open = true" 
-                                @mouseleave="open = true"
+                                id="kategoriClassMenu"
+                                class="ml-4 space-y-1 hidden"
+                                onmouseenter="openMenu('kategoriClassMenu', 'kategoriClassChevron')" 
+                                onmouseleave="openMenu('kategoriClassMenu', 'kategoriClassChevron')"
                             >
-                            <div x-data="{ open: false }">
-                                <button @click="open = !open"
-                                    class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950">
-                                    <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
-                                        x-bind:class="open ? 'rotate-90' : ''" />👨‍🏫 Data Guru
-                                </button>
-                                <div 
-                                    x-show="open" 
-                                    x-transition 
-                                    @click.away="open = false"
-                                    class="ml-4 space-y-1"
-                                    @mouseenter="open = true" 
-                                    @mouseleave="open = true"
-                                >
-                                    <a href="#" onclick="loadContent('mgmt-teachers')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📋 Daftar Guru</a>
-                                    <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">🏫 Kelas Guru</a>
+                                <div>
+                                    <button type="button"
+                                        class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950"
+                                        onclick="toggleMenu('guruMenu', 'guruChevron')">
+                                        <x-heroicon-o-chevron-right id="guruChevron" class="ml-1 w-4 h-4 transform transition-transform" />👨‍🏫 Data Guru
+                                    </button>
+                                    <div 
+                                        id="guruMenu"
+                                        class="ml-4 space-y-1 hidden"
+                                        onmouseenter="openMenu('guruMenu', 'guruChevron')" 
+                                        onmouseleave="openMenu('guruMenu', 'guruChevron')"
+                                    >
+                                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.guru.*') ? 'bg-gray-200' : '' }}">📋 Daftar Guru</a>
+                                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.guru.kelas.*') ? 'bg-gray-200' : '' }}">🏫 Kelas Guru</a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button type="button"
+                                        class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950"
+                                        onclick="toggleMenu('santriMenu', 'santriChevron')">
+                                        <x-heroicon-o-chevron-right id="santriChevron" class="ml-1 w-4 h-4 transform transition-transform" />👨‍🎓 Data Santri
+                                    </button>
+                                    <div 
+                                        id="santriMenu"
+                                        class="ml-4 space-y-1 hidden"
+                                        onmouseenter="openMenu('santriMenu', 'santriChevron')" 
+                                        onmouseleave="openMenu('santriMenu', 'santriChevron')"
+                                    >
+                                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.santri.*') ? 'bg-gray-200' : '' }}">📋 Daftar Santri</a>
+                                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.santri.create') ? 'bg-gray-200' : '' }}">➕ Tambah Santri</a>
+                                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.santri.kelas.*') ? 'bg-gray-200' : '' }}">🏫 Kelas / Tingkatan</a>
+                                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.santri.alumni.*') ? 'bg-gray-200' : '' }}">📦 Alumni / Keluar</a>
+                                    </div>
                                 </div>
                             </div>
-        
-
-                            <div x-data="{ open: false }">
-                                <button @click="open = !open"
-                                    class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950">
-                                    <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
-                                        x-bind:class="open ? 'rotate-90' : ''" />👨‍🎓 Data Santri
-                                </button>
-                                <div 
-                                    x-show="open" 
-                                    x-transition 
-                                    @click.away="open = false"
-                                    class="ml-4 space-y-1"
-                                    @mouseenter="open = true" 
-                                    @mouseleave="open = true"
-                                >
-                                    <a href="#" onclick="loadContent('admin.management.data-santri.content')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📋 Daftar Santri</a>
-                                    <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">➕ Tambah Santri</a>
-                                    <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">🏫 Kelas / Tingkatan</a>
-                                    <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">📦 Alumni / Keluar</a>
-                                </div>
-                            </div>
-                            </div>
-
-                            
-
-                            
-                            
                         </div>
 
-                
-                        <div x-data="{ open: false }">
-                            <button @click="open = !open"
-                                class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950">
-                                <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
-                                    x-bind:class="open ? 'rotate-90' : ''" />💰 Data Keuangan
+                        <div>
+                            <button type="button"
+                                class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950"
+                                onclick="toggleMenu('keuanganMenu', 'keuanganChevron')">
+                                <x-heroicon-o-chevron-right id="keuanganChevron" class="ml-1 w-4 h-4 transform transition-transform" />💰 Data Keuangan
                             </button>
                             <div 
-                                x-show="open" 
-                                x-transition 
-                                @click.away="open = false"
-                                class="ml-4 space-y-1"
-                                @mouseenter="open = true" 
-                                @mouseleave="open = true"
+                                id="keuanganMenu"
+                                class="ml-4 space-y-1 hidden"
+                                onmouseenter="openMenu('keuanganMenu', 'keuanganChevron')" 
+                                onmouseleave="openMenu('keuanganMenu', 'keuanganChevron')"
                             >
-                                <a href="#" onclick="loadContent('mgmt-finance')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📊 Laporan Keuangan</a>
-                                <a href="#" onclick="loadContent('mgmt-finance-pemasukan')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">💵 Pemasukan</a>
-                                <a href="#" onclick="loadContent('mgmt-finance-pengeluaran')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">💸 Pengeluaran</a>
+                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.keuangan.laporan.*') ? 'bg-gray-200' : '' }}">📊 Laporan Keuangan</a>
+                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.keuangan.pemasukan.*') ? 'bg-gray-200' : '' }}">💵 Pemasukan</a>
+                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.keuangan.pengeluaran.*') ? 'bg-gray-200' : '' }}">💸 Pengeluaran</a>
                             </div>
                         </div>
-                        <a href="#" onclick="loadContent('mgmt-account')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">👤 Perbarui Akun Profil</a>
-                        <a href="#" onclick="loadContent('mgmt-messages')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">✉️ Pesan Masuk</a>
-                        <a href="#" onclick="loadContent('mgmt-applications')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📝 Formulir Masuk</a>
-                        <a href="#" onclick="loadContent('mgmt-admin-accounts')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">🧑‍💼 Data Akun Pengurus</a>
-                        <a href="#" onclick="loadContent('mgmt-programs')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📚 Data Program</a>
+                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.account.profile') ? 'bg-gray-200' : '' }}">👤 Perbarui Akun Profil</a>
+                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.messages.*') ? 'bg-gray-200' : '' }}">✉️ Pesan Masuk</a>
+                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.applications.*') ? 'bg-gray-200' : '' }}">📝 Formulir Masuk</a>
+                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.accounts.*') ? 'bg-gray-200' : '' }}">🧑‍💼 Data Akun Pengurus</a>
+                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.programs.*') ? 'bg-gray-200' : '' }}">📚 Data Program</a>
                     </div>
                 </div>
 
-
-
                 <!-- Kontak -->
-                <a href="#"
-                    class="flex items-center gap-2 font-semibold  text-white hover:bg-white hover:text-blue-950">
+                <a href=""
+                    class="flex items-center gap-2 font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.kontak.*') ? 'bg-gray-200' : '' }}">
                     <x-heroicon-o-phone class="w-4 h-4" /> Kontak
                 </a>
 
                 <!-- Pengguna -->
-                <a href="#"
-                    class="flex items-center gap-2 font-semibold  text-white hover:bg-white hover:text-blue-950">
+                <a href=""
+                    class="flex items-center gap-2 font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.users.*') ? 'bg-gray-200' : '' }}">
                     <x-heroicon-o-users class="w-4 h-4" /> Pengguna
                 </a>
             </nav>
         </aside>
+        <script>
+            // Helper to close all submenus except the one being opened
+            function closeAllMenus(exceptId = null) {
+                const menus = [
+                    'yayasanMenu', 'tentangKamiMenu', 'programMenu', 'informasiMenu',
+                    'manajemenMenu', 'kategoriClassMenu', 'guruMenu', 'santriMenu', 'keuanganMenu'
+                ];
+                const chevrons = [
+                    'yayasanChevron', 'tentangKamiChevron', 'programChevron', 'informasiChevron',
+                    'manajemenChevron', 'kategoriClassChevron', 'guruChevron', 'santriChevron', 'keuanganChevron'
+                ];
+                menus.forEach((id, idx) => {
+                    if (id !== exceptId) {
+                        const el = document.getElementById(id);
+                        if (el) el.classList.add('hidden');
+                        const chev = document.getElementById(chevrons[idx]);
+                        if (chev) chev.classList.remove('rotate-90', 'rotate-180');
+                    }
+                });
+            }
+
+            function toggleMenu(menuId, chevronId) {
+                const menu = document.getElementById(menuId);
+                const chevron = document.getElementById(chevronId);
+                if (!menu) return;
+                const isOpen = !menu.classList.contains('hidden');
+                closeAllMenus(menuId);
+                if (isOpen) {
+                    menu.classList.add('hidden');
+                    if (chevron) chevron.classList.remove('rotate-90', 'rotate-180');
+                } else {
+                    menu.classList.remove('hidden');
+                    // Set chevron direction
+                    if (chevron) {
+                        if (chevronId.endsWith('Chevron') && (chevronId === 'yayasanChevron' || chevronId === 'manajemenChevron')) {
+                            chevron.classList.add('rotate-180');
+                            chevron.classList.remove('rotate-90');
+                        } else {
+                            chevron.classList.add('rotate-90');
+                            chevron.classList.remove('rotate-180');
+                        }
+                    }
+                }
+            }
+
+            function openMenu(menuId, chevronId) {
+                const menu = document.getElementById(menuId);
+                const chevron = document.getElementById(chevronId);
+                if (menu) menu.classList.remove('hidden');
+                if (chevron) {
+                    if (chevronId.endsWith('Chevron') && (chevronId === 'yayasanChevron' || chevronId === 'manajemenChevron')) {
+                        chevron.classList.add('rotate-180');
+                        chevron.classList.remove('rotate-90');
+                    } else {
+                        chevron.classList.add('rotate-90');
+                        chevron.classList.remove('rotate-180');
+                    }
+                }
+            }
+        </script>
         <!-- End Sidebar -->
 
         <!-- Main Content -->

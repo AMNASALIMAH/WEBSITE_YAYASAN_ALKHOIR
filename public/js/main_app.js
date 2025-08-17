@@ -296,12 +296,6 @@ function loadContent(type) {
     console.log(`Current content type: ${currentContentType}`);
     console.log(`Navigation necessary:`, isNavigationNecessary(type));
     
-    // Prevent multiple simultaneous loading operations
-    if (window.isLoadingContent) {
-        console.log('Content loading already in progress, skipping...');
-        return;
-    }
-    
     // Check if navigation is necessary
     if (!isNavigationNecessary(type)) {
         console.log(`Navigation not necessary for type: ${type}, skipping...`);
@@ -309,29 +303,12 @@ function loadContent(type) {
     }
     
     console.log(`Starting to load content for type: ${type}`);
-    window.isLoadingContent = true;
     
     // Update current content type
     currentContentType = type;
     
-    // Add timeout to reset loading flag in case something goes wrong
-    setTimeout(() => {
-        if (window.isLoadingContent) {
-            console.log('Content loading timeout, resetting flag...');
-            window.isLoadingContent = false;
-        }
-    }, 10000); // 10 second timeout
-    
     // Clean up existing content before loading new content
     cleanupMainContent();
-    
-    // Show loading state
-    mainContent.innerHTML = `
-        <div class="flex items-center justify-center h-64">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <span class="ml-3 text-gray-600">Loading...</span>
-        </div>
-    `;
     
     // Load content based on type
     switch(type) {
@@ -571,12 +548,19 @@ function loadContent(type) {
                     mainContent.innerHTML = html;
                     initializeMainContentUI();
                     history.pushState({content: 'mgmt-programs'}, 'Data Program', '/admin/management/programs/content');
+                    // Refresh the page twice after routing
+                    setTimeout(() => {
+                        window.location.reload();
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500);
+                    }, 500);
                 })
                 .catch(error => {
                     console.error('Error loading content:', error);
                     mainContent.innerHTML = `
-                        <div class=\"bg-red-50 border border-red-200 rounded-lg p-4\">
-                            <p class=\"text-red-700\">Error loading content. Please try again.</p>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <p class="text-red-700">Error loading content. Please try again.</p>
                         </div>
                     `;
                 });
