@@ -281,8 +281,6 @@
 
 <script src="{{ asset('js/santri_account.js') }}" defer></script>
 <script src="{{ asset('js/dashboard.js') }}" defer></script>
-<script src="{{ asset('js/profile_yayasan.js') }}" defer></script>
-<script src="{{ asset('js/income.js') }}" defer></script>
 
 
 
