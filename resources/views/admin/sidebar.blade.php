@@ -247,5 +247,29 @@
             class="flex items-center gap-2 font-semibold  text-white hover:bg-white hover:text-blue-950">
             <x-heroicon-o-users class="w-4 h-4" /> Pengguna
         </a>
+        
+        <!-- Sidebar User Info -->
+        <div class="mt-8 mb-4 px-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white rounded-full h-10 w-10 flex items-center justify-center text-blue-900 font-bold text-lg uppercase">
+                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                </div>
+                <div>
+                    <div class="font-semibold text-white text-base">{{ Auth::user()->name }}</div>
+                    <div class="text-xs text-blue-200">Admin</div>
+                </div>
+            </div>
+            <div class="mt-3 flex flex-col gap-1">
+                <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 text-sm text-blue-200 hover:text-white hover:underline">
+                    <x-heroicon-o-user class="w-4 h-4" /> Profil Saya
+                </a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="flex items-center gap-2 text-sm text-blue-200 hover:text-white hover:underline w-full text-left">
+                        <x-heroicon-o-arrow-left-on-rectangle class="w-4 h-4" /> Keluar
+                    </button>
+                </form>
+            </div>
+        </div>
     </nav>
 </aside>

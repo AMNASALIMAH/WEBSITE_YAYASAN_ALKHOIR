@@ -5,15 +5,62 @@
         <h2 class="text-lg md:text-xl font-bold text-white bg-blue-900 px-4 py-2 rounded-t-md mb-6">
             Hubungi Kami
         </h2>
-        <form>
+        @if(session('success'))
+            <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if ($errors->any())
+            <div class="mb-4 p-3 bg-red-100 text-red-800 rounded">
+                <ul class="list-disc pl-5">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <form method="POST" action="{{ route('kontak.store') }}">
+            @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" placeholder="Nama Depan *" class="p-3 rounded border w-full" required>
-                <input type="text" placeholder="Nama Belakang" class="p-3 rounded border w-full">
-                <input type="text" placeholder="No. HP *" class="p-3 rounded border w-full" required>
-                <input type="email" placeholder="Alamat Email *" class="p-3 rounded border w-full" required>
+                <input 
+                    type="text" 
+                    name="nama_depan" 
+                    placeholder="Nama Depan *" 
+                    class="p-3 rounded border w-full @error('nama_depan') border-red-500 @enderror" 
+                    value="{{ old('nama_depan') }}"
+                    required
+                >
+                <input 
+                    type="text" 
+                    name="nama_belakang" 
+                    placeholder="Nama Belakang" 
+                    class="p-3 rounded border w-full @error('nama_belakang') border-red-500 @enderror"
+                    value="{{ old('nama_belakang') }}"
+                >
+                <input 
+                    type="text" 
+                    name="no_hp" 
+                    placeholder="No. HP *" 
+                    class="p-3 rounded border w-full @error('no_hp') border-red-500 @enderror"
+                    value="{{ old('no_hp') }}"
+                    required
+                >
+                <input 
+                    type="email" 
+                    name="email" 
+                    placeholder="Alamat Email *" 
+                    class="p-3 rounded border w-full @error('email') border-red-500 @enderror"
+                    value="{{ old('email') }}"
+                    required
+                >
             </div>
 
-            <textarea placeholder="Pesan" class="w-full mt-4 p-3 rounded border h-28" required></textarea>
+            <textarea 
+                name="pesan" 
+                placeholder="Pesan" 
+                class="w-full mt-4 p-3 rounded border h-28 @error('pesan') border-red-500 @enderror"
+                required
+            >{{ old('pesan') }}</textarea>
 
             {{-- <label class="block mt-4 mb-1 text-sm font-medium text-gray-700">
                 Ketik karakter di bawah ini *
@@ -69,7 +116,4 @@
         </div>
     </div>
 </main>
-
-
-
 </x-landingpage>

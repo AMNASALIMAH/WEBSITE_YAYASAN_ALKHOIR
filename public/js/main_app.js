@@ -294,13 +294,6 @@ function loadContent(type) {
     
     console.log(`loadContent called with type: ${type}`);
     console.log(`Current content type: ${currentContentType}`);
-    console.log(`Navigation necessary:`, isNavigationNecessary(type));
-    
-    // Check if navigation is necessary
-    if (!isNavigationNecessary(type)) {
-        console.log(`Navigation not necessary for type: ${type}, skipping...`);
-        return;
-    }
     
     console.log(`Starting to load content for type: ${type}`);
     
@@ -332,6 +325,26 @@ function loadContent(type) {
                     `;
                 });
             break;
+        case 'news':
+                fetch('/admin/news/content')
+                    .then(response => response.text())
+                    .then(html => {
+                        mainContent.innerHTML = html;
+                        initializeMainContentUI();
+                        // Execute any inline scripts from the loaded fragment
+                        runScriptsFrom(mainContent);
+                        // Update browser history without page refresh
+                        history.pushState({content: 'news'}, 'News', '/admin/news');
+                    })
+                    .catch(error => {
+                        console.error('Error loading content:', error);
+                        mainContent.innerHTML = `
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                <p class="text-red-700">Error loading content. Please try again.</p>
+                            </div>
+                        `;
+                    });
+                break;
         case 'galery':
             fetch('/admin/galery/content')
                 .then(response => response.text())
@@ -350,13 +363,16 @@ function loadContent(type) {
                     `;
                 });
             break;
-        case 'mgmt-profile':
-            fetch('/admin/management/profile/content')
+        
+            case 'mgmt-profile':
+            console.log('Starting to load content for type: mgmt-profile');
+            fetch('/admin/management/profile/yayasan/content')
                 .then(response => response.text())
                 .then(html => {
                     mainContent.innerHTML = html;
                     initializeMainContentUI();
-                    history.pushState({content: 'mgmt-profile'}, 'Profil Yayasan', '/admin/management/profile');
+                    // Use the correct URL for pushState to match the actual route, so refresh works
+                    history.pushState({content: 'mgmt-profile'}, 'Profil Yayasan', '/admin/management/profile/yayasan');
                 })
                 .catch(error => {
                     console.error('Error loading content:', error);
@@ -413,6 +429,7 @@ function loadContent(type) {
                     window.isLoadingContent = false;
                 });
             break;
+
         case 'mgmt-finance':
             fetch('/admin/management/finance/content')
                 .then(response => response.text())
@@ -431,12 +448,18 @@ function loadContent(type) {
                 });
             break;
         case 'mgmt-finance-pemasukan':
-            fetch('/admin/management/finance/pemasukan')
+            fetch('/admin/management/finance/pemasukan/content')
                 .then(response => response.text())
                 .then(html => {
                     mainContent.innerHTML = html;
                     initializeMainContentUI();
-                    history.pushState({content: 'mgmt-finance-pemasukan'}, 'Pemasukan', '/admin/management/finance/pemasukan');
+                    history.pushState(
+                        {content: 'mgmt-finance-pemasukan'},
+                        'Pemasukan',
+                        '/admin/management/finance/pemasukan'
+                    );
+                    window.isLoadingContent = false;
+                    // Always call loadContent() after route refresh
                 })
                 .catch(error => {
                     console.error('Error loading content:', error);
@@ -445,10 +468,11 @@ function loadContent(type) {
                             <p class="text-red-700">Error loading content. Please try again.</p>
                         </div>
                     `;
+                    window.isLoadingContent = false;
                 });
             break;
         case 'mgmt-finance-pengeluaran':
-            fetch('/admin/management/finance/pengeluaran')
+            fetch('/admin/management/finance/pengeluaran/content')
                 .then(response => response.text())
                 .then(html => {
                     mainContent.innerHTML = html;
@@ -565,8 +589,10 @@ function loadContent(type) {
                     `;
                 });
             break;
+
         default:
             mainContent.innerHTML = '<p>Content not found</p>';
+    
     }
 }
 
@@ -577,31 +603,14 @@ let currentContentType = null;
 function handleSidebarNavigation(type) {
     console.log(`Sidebar navigation requested for type: ${type}`);
     
-    // Check if navigation is necessary
-    if (!isNavigationNecessary(type)) {
-        console.log(`Sidebar navigation not necessary for type: ${type}`);
-        return;
-    }
-    
-    // Load the content
+    // Always load the content regardless of current state
     loadContent(type);
 }
 
-// Function to check if navigation is necessary
+// Function to check if navigation is necessary (now always returns true)
 function isNavigationNecessary(type) {
-    // If we're already on this content type, navigation is not necessary
-    if (currentContentType === type) {
-        console.log(`Navigation not necessary: already on content type ${type}`);
-        return false;
-    }
-    
-    // If the content is already loaded in the DOM, navigation is not necessary
-    if (isAlreadyOnContent(type)) {
-        console.log(`Navigation not necessary: content already loaded for type ${type}`);
-        return false;
-    }
-    
-    console.log(`Navigation necessary for content type: ${type}`);
+    // Always return true to ensure loadContent is always called
+    console.log(`Navigation always necessary for content type: ${type}`);
     return true;
 }
 
@@ -625,6 +634,8 @@ function isAlreadyOnContent(type) {
         console.log(`isAlreadyOnContent: checking admin accounts content:`, content !== null);
         return content !== null;
     }
+
+    
     
     if (type === 'mgmt-students') {
         const content = mainContent.querySelector('#students-content');
@@ -701,22 +712,15 @@ function cleanupMainContent() {
 // Handle browser back/forward buttons
 window.addEventListener('popstate', function(event) {
     if (event.state && event.state.content) {
-        // Check if we're already on the same content type
-        if (isAlreadyOnContent(event.state.content)) {
-            console.log('Already on the same content type, skipping...');
-            return;
-        }
+        // Always load content regardless of current state
         loadContent(event.state.content);
     }
 });
 
 // Load initial content if provided by server (pretty URLs)
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if content is already loaded
-    if (document.querySelector('[data-content]')) {
-        console.log('Content already loaded, skipping initial content loading...');
-        return;
-    }
+    // Always load initial content regardless of current state
+    console.log('DOMContentLoaded: Loading initial content...');
     
     // Initial content loading is handled in the Blade template
     // The initialContent variable is set by the server and will be handled by the template

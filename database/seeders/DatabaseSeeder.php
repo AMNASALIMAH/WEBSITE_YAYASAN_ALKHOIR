@@ -54,6 +54,35 @@ class DatabaseSeeder extends Seeder
             FinanceExpenseSeeder::class,
             FinanceSppSettingSeeder::class,
             ProgramSeeder::class,
+            YayasanTableSeeder::class,
+        ]);
+        
+        // Create sample messages for testing
+        \App\Models\KirimPesan::create([
+            'nama_depan' => 'Ahmad',
+            'nama_belakang' => 'Rizki',
+            'no_hp' => '081234567890',
+            'email' => 'ahmad@example.com',
+            'pesan' => 'Saya ingin bertanya tentang program MT Al-Khoir. Apakah masih ada kuota untuk tahun ajaran baru?',
+            'is_read' => false,
+        ]);
+        
+        \App\Models\KirimPesan::create([
+            'nama_depan' => 'Siti',
+            'nama_belakang' => 'Nurhaliza',
+            'no_hp' => '081234567891',
+            'email' => 'siti@example.com',
+            'pesan' => 'Bagaimana cara mendaftar untuk program SDT Al-Khoir? Mohon informasi lengkapnya.',
+            'is_read' => false,
+        ]);
+        
+        \App\Models\KirimPesan::create([
+            'nama_depan' => 'Muhammad',
+            'nama_belakang' => 'Fadli',
+            'no_hp' => '081234567892',
+            'email' => 'fadli@example.com',
+            'pesan' => 'Saya sudah membaca informasi tentang yayasan. Sangat menarik dan ingin bergabung.',
+            'is_read' => true,
         ]);
     }
 }

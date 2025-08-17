@@ -96,8 +96,8 @@
 
         <!-- Quick Actions -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <!-- Quick Add Income -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-300">
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-300">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Tambah Pemasukan</h3>
                 <p class="text-gray-600 mb-4">Catat pembayaran SPP atau pemasukan lainnya dengan cepat</p>
                 <a href="{{ route('admin.management.finance.pemasukan') }}" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-all duration-200 hover:shadow-lg">
@@ -118,7 +118,7 @@
                     </svg>
                     Tambah Pengeluaran
                 </a>
-            </div>
+            </div> 
 
             <!-- SPP Settings -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-300">

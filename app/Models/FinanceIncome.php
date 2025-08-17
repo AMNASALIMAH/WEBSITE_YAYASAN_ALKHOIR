@@ -28,8 +28,5 @@ class FinanceIncome extends Model
         'payment_date' => 'date',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
+
 }

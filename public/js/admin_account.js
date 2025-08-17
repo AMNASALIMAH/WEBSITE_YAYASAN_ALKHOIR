@@ -535,6 +535,12 @@ class AdminAccountsManager {
         this.currentUserId = null;
     }
 
+    closeDeleteModalTambah() {
+        document.getElementById('adminModal').classList.add('hidden');
+        document.querySelector('#adminModal .relative').classList.remove('animate-in', 'slide-in-from-top-2');
+        this.currentUserId = null;
+    }
+
     async confirmDelete() {
         try {
             const response = await fetch(this.routes.delete(this.currentUserId), {
@@ -834,6 +840,12 @@ function confirmDelete() {
 function closeDeleteModal() {
     if (window.adminAccountsManager) {
         window.adminAccountsManager.closeDeleteModal();
+    }
+}
+
+function closeDeleteModalTambah() {
+    if (window.adminAccountsManager) {
+        window.adminAccountsManager.closeDeleteModalTambah();
     }
 }
 

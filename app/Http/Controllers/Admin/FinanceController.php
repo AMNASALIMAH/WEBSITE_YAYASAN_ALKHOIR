@@ -16,7 +16,7 @@ class FinanceController extends Controller
 {
     public function getManagementFinanceContent()
     {
-        $income = FinanceIncome::with('user')->latest()->take(10)->get();
+        $income = FinanceIncome::latest()->take(10)->get();
         $totalIncome = FinanceIncome::where('status', 'completed')->sum('amount');
         $pendingPayments = FinanceIncome::where('status', 'pending')->count();
         $totalTransactions = FinanceIncome::count();
@@ -26,17 +26,159 @@ class FinanceController extends Controller
 
     public function getManagementFinancePemasukan()
     {
-        $income = FinanceIncome::with('user')->latest()->paginate(15);
+        $income = FinanceIncome::latest()->paginate(15);
+        
+        // Check if this is an AJAX request for content
+        if (request()->ajax() && request()->is('*/content')) {
+            return view('admin.management.finance.pemasukan', compact('income'))->render();
+        }
+        
         return view('admin.management.finance.pemasukan', compact('income'));
     }
 
     public function getManagementFinancePengeluaran()
     {
-        $expenses = FinanceExpense::with(['user', 'approver'])->latest()->paginate(15);
+        $expenses = FinanceExpense::latest()->paginate(15);
+        
+        // Check if this is an AJAX request for content
+        if (request()->ajax() && request()->is('*/content')) {
+            return view('admin.management.finance.pengeluaran', compact('expenses'))->render();
+        }
+        
         return view('admin.management.finance.pengeluaran', compact('expenses'));
     }
 
-    // Income CRUD
+    // Simple Laravel CRUD for Income (without JavaScript)
+    public function createIncome()
+    {
+        return view('admin.management.finance.income.create');
+    }
+
+    public function storeIncomeSimple(Request $request)
+    {
+        $request->validate([
+            'student_name' => 'required|string|max:255',
+            'class' => 'required|string|max:100',
+            'amount' => 'required|numeric|min:0',
+            'payment_method' => 'required|string|max:100',
+            'receipt_number' => 'required|string|max:255',
+            'payment_date' => 'required|date',
+            'status' => 'required|in:pending,completed,cancelled',
+            'notes' => 'nullable|string',
+        ]);
+
+        $data = $request->all();
+        $data['created_by'] = auth()->user()->name;
+        
+        FinanceIncome::create($data);
+        
+        return redirect()->route('admin.management.finance.pemasukan')
+            ->with('success', 'Data pemasukan berhasil disimpan');
+    }
+
+    public function editIncome(FinanceIncome $income)
+    {
+        return view('admin.management.finance.income.edit', compact('income'));
+    }
+
+    public function updateIncomeSimple(Request $request, FinanceIncome $income)
+    {
+        $request->validate([
+            'student_name' => 'required|string|max:255',
+            'class' => 'required|string|max:100',
+            'amount' => 'required|numeric|min:0',
+            'payment_method' => 'required|string|max:100',
+            'receipt_number' => 'required|string|max:255',
+            'payment_date' => 'required|date',
+            'status' => 'required|in:pending,completed,cancelled',
+            'notes' => 'nullable|string',
+        ]);
+
+        $income->update($request->all());
+        
+        return redirect()->route('admin.management.finance.pemasukan')
+            ->with('success', 'Data pemasukan berhasil diperbarui');
+    }
+
+    public function showIncomeSimple(FinanceIncome $income)
+    {
+        return view('admin.management.finance.income.show', compact('income'));
+    }
+
+    public function deleteIncomeSimple(FinanceIncome $income)
+    {
+        $income->delete();
+        
+        return redirect()->route('admin.management.finance.pemasukan')
+            ->with('success', 'Data pemasukan berhasil dihapus');
+    }
+
+    // Simple Laravel CRUD for Expense (without JavaScript)
+    public function createExpense()
+    {
+        return view('admin.management.finance.expense.create');
+    }
+
+    public function storeExpenseSimple(Request $request)
+    {
+        $request->validate([
+            'expense_title' => 'required|string|max:255',
+            'category' => 'required|string|max:100',
+            'amount' => 'required|numeric|min:0',
+            'expense_date' => 'required|date',
+            'receipt_number' => 'required|string|max:255',
+            'status' => 'required|in:pending,approved,rejected',
+            'description' => 'required|string',
+            'notes' => 'nullable|string',
+        ]);
+
+        $data = $request->all();
+        $data['created_by'] = auth()->user()->name;
+        
+        FinanceExpense::create($data);
+        
+        return redirect()->route('admin.management.finance.pengeluaran')
+            ->with('success', 'Data pengeluaran berhasil disimpan');
+    }
+
+    public function editExpense(FinanceExpense $expense)
+    {
+        return view('admin.management.finance.expense.edit', compact('expense'));
+    }
+
+    public function updateExpenseSimple(Request $request, FinanceExpense $expense)
+    {
+        $request->validate([
+            'expense_title' => 'required|string|max:255',
+            'category' => 'required|string|max:100',
+            'amount' => 'required|numeric|min:0',
+            'expense_date' => 'required|date',
+            'receipt_number' => 'required|string|max:255',
+            'status' => 'required|in:pending,approved,rejected',
+            'description' => 'required|string',
+            'notes' => 'nullable|string',
+        ]);
+
+        $expense->update($request->all());
+        
+        return redirect()->route('admin.management.finance.pengeluaran')
+            ->with('success', 'Data pengeluaran berhasil diperbarui');
+    }
+
+    public function showExpenseSimple(FinanceExpense $expense)
+    {
+        return view('admin.management.finance.expense.show', compact('expense'));
+    }
+
+    public function deleteExpenseSimple(FinanceExpense $expense)
+    {
+        $expense->delete();
+        
+        return redirect()->route('admin.management.finance.pengeluaran')
+            ->with('success', 'Data pengeluaran berhasil dihapus');
+    }
+
+    // Income CRUD (AJAX - existing)
     public function showIncome(FinanceIncome $income): JsonResponse
     {
         try {
@@ -109,7 +251,7 @@ class FinanceController extends Controller
         }
     }
 
-    // Expense CRUD
+    // Expense CRUD (AJAX - existing)
     public function showExpense(FinanceExpense $expense): JsonResponse
     {
         try {

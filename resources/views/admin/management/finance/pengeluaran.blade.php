@@ -11,12 +11,12 @@
                     <p class="mt-2 text-gray-600">Kelola semua data pengeluaran dan biaya operasional yayasan</p>
                 </div>
                 <div class="flex space-x-3">
-                    <button onclick="openAddExpenseModal()" class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-all duration-200 hover:shadow-lg">
+                    <a href="{{ route('admin.management.finance.expense.create') }}" class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-all duration-200 hover:shadow-lg">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
                         Tambah Pengeluaran
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -142,29 +142,26 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center space-x-2">
-                                    <button onclick="viewExpense({{ $item->id }})" class="text-blue-600 hover:text-blue-900 transition-colors duration-200" title="Lihat Detail">
+                                    <a href="{{ route('admin.management.finance.expense.show', $item) }}" class="text-blue-600 hover:text-blue-900 transition-colors duration-200" title="Lihat Detail">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                         </svg>
-                                    </button>
-                                    <button onclick="editExpense({{ $item->id }})" class="text-indigo-600 hover:text-indigo-900 transition-colors duration-200" title="Edit">
+                                    </a>
+                                    <a href="{{ route('admin.management.finance.expense.edit', $item) }}" class="text-indigo-600 hover:text-indigo-900 transition-colors duration-200" title="Edit">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                         </svg>
-                                    </button>
-                                    @if($item->status === 'pending')
-                                    <button onclick="approveExpense({{ $item->id }})" class="text-green-600 hover:text-green-900 transition-colors duration-200" title="Setujui">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </button>
-                                    @endif
-                                    <button onclick="deleteExpense({{ $item->id }})" class="text-red-600 hover:text-red-900 transition-colors duration-200" title="Hapus">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                    </button>
+                                    </a>
+                                    <form action="{{ route('admin.management.finance.expense.delete.simple', $item) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-900 transition-colors duration-200" title="Hapus">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -360,326 +357,3 @@
 
 @endsection
 
-@push('scripts')
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-let currentExpenseId = null;
-let deleteExpenseId = null;
-
-// Toast notification function
-function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    const toastMessage = document.getElementById('toastMessage');
-    
-    // Change border color based on type
-    const borderClass = type === 'success' ? 'border-green-500' : 'border-red-500';
-    const iconClass = type === 'success' ? 'text-green-400' : 'text-red-400';
-    
-    toast.querySelector('.border-l-4').className = `border-l-4 ${borderClass}`;
-    toast.querySelector('svg').className = `h-5 w-5 ${iconClass}`;
-    
-    toastMessage.textContent = message;
-    toast.classList.remove('hidden');
-    
-    setTimeout(() => {
-        toast.classList.add('hidden');
-    }, 3000);
-}
-
-// Modal functions
-function openAddExpenseModal() {
-    document.getElementById('modalTitle').textContent = 'Tambah Pengeluaran';
-    document.getElementById('submitButtonText').textContent = 'Simpan';
-    document.getElementById('expenseForm').reset();
-    document.getElementById('expenseId').value = '';
-    currentExpenseId = null;
-    document.getElementById('expenseModal').classList.remove('hidden');
-}
-
-function closeExpenseModal() {
-    document.getElementById('expenseModal').classList.add('hidden');
-}
-
-function openViewExpenseModal() {
-    document.getElementById('viewExpenseModal').classList.remove('hidden');
-}
-
-function closeViewExpenseModal() {
-    document.getElementById('viewExpenseModal').classList.add('hidden');
-}
-
-function openDeleteModal() {
-    document.getElementById('deleteModal').classList.remove('hidden');
-}
-
-function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.add('hidden');
-}
-
-// CRUD operations
-function viewExpense(id) {
-    // Fetch expense data and display in modal
-    fetch(`/admin/management/finance/expense/${id}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                displayExpenseDetails(data.data);
-                openViewExpenseModal();
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Gagal memuat data pengeluaran', 'error');
-        });
-}
-
-function displayExpenseDetails(expense) {
-    const content = document.getElementById('viewExpenseContent');
-    content.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Judul Pengeluaran</label>
-                <p class="mt-1 text-sm text-gray-900">${expense.expense_title}</p>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Kategori</label>
-                <p class="mt-1">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        ${expense.category}
-                    </span>
-                </p>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Jumlah</label>
-                <p class="mt-1 text-sm font-semibold text-gray-900">Rp ${parseInt(expense.amount).toLocaleString('id-ID')}</p>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Nomor Kwitansi</label>
-                <p class="mt-1 text-sm text-gray-900">${expense.receipt_number}</p>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Status</label>
-                <p class="mt-1">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        expense.status === 'approved' ? 'bg-green-100 text-green-800' :
-                        expense.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                    }">
-                        ${expense.status === 'approved' ? 'Disetujui' : 
-                          expense.status === 'pending' ? 'Pending' : 'Ditolak'}
-                    </span>
-                </p>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Tanggal Pengeluaran</label>
-                <p class="mt-1 text-sm text-gray-900">${new Date(expense.expense_date).toLocaleDateString('id-ID')}</p>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Dibuat Oleh</label>
-                <p class="mt-1 text-sm text-gray-900">${expense.created_by || '-'}</p>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Disetujui Oleh</label>
-                <p class="mt-1 text-sm text-gray-900">${expense.approved_by || '-'}</p>
-            </div>
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Deskripsi</label>
-            <p class="mt-1 text-sm text-gray-900">${expense.description || 'Tidak ada deskripsi'}</p>
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Catatan</label>
-            <p class="mt-1 text-sm text-gray-900">${expense.notes || 'Tidak ada catatan'}</p>
-        </div>
-    `;
-}
-
-function editExpense(id) {
-    currentExpenseId = id;
-    
-    // Fetch expense data and populate form
-    fetch(`/admin/management/finance/expense/${id}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                populateExpenseForm(data.data);
-                document.getElementById('modalTitle').textContent = 'Edit Pengeluaran';
-                document.getElementById('submitButtonText').textContent = 'Update';
-                document.getElementById('expenseModal').classList.remove('hidden');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Gagal memuat data pengeluaran', 'error');
-        });
-}
-
-function populateExpenseForm(expense) {
-    document.getElementById('expenseId').value = expense.id;
-    document.getElementById('expense_title').value = expense.expense_title;
-    document.getElementById('category').value = expense.category;
-    document.getElementById('amount').value = expense.amount;
-    document.getElementById('expense_date').value = expense.expense_date;
-    document.getElementById('receipt_number').value = expense.receipt_number;
-    document.getElementById('status').value = expense.status;
-    document.getElementById('description').value = expense.description || '';
-    document.getElementById('notes').value = expense.notes || '';
-}
-
-function approveExpense(id) {
-    if (confirm('Apakah Anda yakin ingin menyetujui pengeluaran ini?')) {
-        fetch(`/admin/management/finance/expense/${id}/approve`, {
-            method: 'PATCH',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showToast(data.message);
-                location.reload();
-            } else {
-                showToast(data.message, 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Gagal menyetujui pengeluaran', 'error');
-        });
-    }
-}
-
-function deleteExpense(id) {
-    deleteExpenseId = id;
-    openDeleteModal();
-}
-
-function confirmDelete() {
-    if (!deleteExpenseId) return;
-    
-    fetch(`/admin/management/finance/expense/${deleteExpenseId}`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showToast(data.message);
-            closeDeleteModal();
-            // Remove row from table
-            const row = document.querySelector(`tr[data-id="${deleteExpenseId}"]`);
-            if (row) row.remove();
-            deleteExpenseId = null;
-        } else {
-            showToast(data.message, 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showToast('Gagal menghapus data pengeluaran', 'error');
-    });
-}
-
-// Form submission
-document.getElementById('expenseForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    const url = currentExpenseId ? 
-        `/admin/management/finance/expense/${currentExpenseId}` : 
-        '/admin/management/finance/expense';
-    const method = currentExpenseId ? 'PUT' : 'POST';
-    
-    fetch(url, {
-        method: method,
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showToast(data.message);
-            closeExpenseModal();
-            // Reload page to show updated data
-            location.reload();
-        } else {
-            showToast(data.message, 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showToast('Gagal menyimpan data pengeluaran', 'error');
-    });
-});
-
-// Search and filter functionality
-document.getElementById('search').addEventListener('input', function() {
-    filterExpense();
-});
-
-document.getElementById('statusFilter').addEventListener('change', function() {
-    filterExpense();
-});
-
-document.getElementById('categoryFilter').addEventListener('change', function() {
-    filterExpense();
-});
-
-document.getElementById('dateFilter').addEventListener('change', function() {
-    filterExpense();
-});
-
-function filterExpense() {
-    const search = document.getElementById('search').value.toLowerCase();
-    const status = document.getElementById('statusFilter').value;
-    const category = document.getElementById('categoryFilter').value;
-    const date = document.getElementById('dateFilter').value;
-    
-    const rows = document.querySelectorAll('#expenseTableBody tr');
-    
-    rows.forEach(row => {
-        const title = row.querySelector('td:nth-child(1) div:nth-child(1)').textContent.toLowerCase();
-        const receiptNumber = row.querySelector('td:nth-child(1) div:nth-child(2)').textContent.toLowerCase();
-        const description = row.querySelector('td:nth-child(1) div:nth-child(3)').textContent.toLowerCase();
-        const categoryText = row.querySelector('td:nth-child(2) span').textContent.toLowerCase();
-        const statusText = row.querySelector('td:nth-child(4) span').textContent.toLowerCase();
-        
-        let show = true;
-        
-        // Search filter
-        if (search && !title.includes(search) && !receiptNumber.includes(search) && !description.includes(search)) {
-            show = false;
-        }
-        
-        // Status filter
-        if (status && statusText !== status) {
-            show = false;
-        }
-        
-        // Category filter
-        if (category && categoryText !== category) {
-            show = false;
-        }
-        
-        // Date filter (you can implement this based on your needs)
-        
-        row.style.display = show ? '' : 'none';
-    });
-}
-
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    // Set current month as default date filter
-    const today = new Date();
-    const currentMonth = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
-    document.getElementById('dateFilter').value = currentMonth;
-});
-</script>
-@endpush

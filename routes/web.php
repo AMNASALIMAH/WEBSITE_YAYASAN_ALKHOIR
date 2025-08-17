@@ -11,14 +11,14 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 
 require __DIR__.'/admin.php';
 require __DIR__.'/finance.php';
 require __DIR__.'/program.php';
+require __DIR__.'/kontak.php';
+require __DIR__.'/dashboard.php';
+require __DIR__.'/yayasan.php';
 
 
 
@@ -41,11 +41,11 @@ Route::match(['PUT', 'POST'], '/admin/teachers/{id}', [TeacherController::class,
 
 // Manajemen Data (AJAX content routes)
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/admin/management/profile/content', [DashboardController::class, 'getManagementProfileContent'])->name('admin.management.profile.content');
+    // Route::get('/admin/management/profile/content', [DashboardController::class, 'getManagementProfileContentYayasan'])->name('admin.management.profile.content');
     Route::get('/admin/management/teachers/content', [DashboardController::class, 'getManagementTeachersContent'])->name('admin.management.teachers.content');
 
     Route::get('/admin/management/account/content', [DashboardController::class, 'getManagementAccountContent'])->name('admin.management.account.content');
-    Route::get('/admin/management/messages/content', [DashboardController::class, 'getManagementMessagesContent'])->name('admin.management.messages.content');
+   
     Route::get('/admin/management/applications/content', [DashboardController::class, 'getManagementApplicationsContent'])->name('admin.management.applications.content');
    
     
@@ -57,7 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/galery', fn () => view('admin.app', ['initialContent' => 'galery']))->name('admin.galery');
 
     Route::prefix('admin/management')->name('admin.management.')->group(function () {
-        Route::get('/profile', fn () => view('admin.app', ['initialContent' => 'mgmt-profile']))->name('profile');
+
         Route::get('/teachers', fn () => view('admin.app', ['initialContent' => 'mgmt-teachers']))->name('teachers');
         Route::get('/students', fn () => view('admin.app', ['initialContent' => 'mgmt-students']))->name('students');
         Route::get('/finance', fn () => view('admin.app', ['initialContent' => 'mgmt-finance']))->name('finance');
@@ -66,7 +66,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/applications', fn () => view('admin.app', ['initialContent' => 'mgmt-applications']))->name('applications');
         Route::get('/admin-accounts', fn () => view('admin.app', ['initialContent' => 'mgmt-admin-accounts']))->name('admin_accounts');
         Route::get('/programs', fn () => view('admin.app', ['initialContent' => 'mgmt-programs']))->name('programs');
+        Route::get('/profile/yayasan', fn () => view('admin.app', ['initialContent' => 'mgmt-profile']))->name('profile.yayasan');
+        Route::get('/profile/pemasukan', fn () => view('admin.app', ['initialContent' => 'mgmt-finance-pemasukan']))->name('profile.pemasukan');
+        Route::get('/profile/pengeluaran', fn () => view('admin.app', ['initialContent' => 'mgmt-finance-pengeluaran']))->name('profile.pengeluaran');
     });
+    
+    // Finance routes outside the prefix group to avoid path duplication
+    Route::get('/admin/management/finance/pemasukan', fn () => view('admin.app', ['initialContent' => 'mgmt-finance-pemasukan']))->name('admin.finance.pemasukan.page');
+    Route::get('/admin/management/finance/pengeluaran', fn () => view('admin.app', ['initialContent' => 'mgmt-finance-pengeluaran']))->name('admin.finance.pengeluaran.page');
 });
 
 // News routes
@@ -134,9 +141,7 @@ Route::get('Majelis Talim Al-Khoir', function () {
 Route::get('/Galeri', function () {
     return view('galeri.galeri');
 })->name('galeri');
-Route::get('/Kontak', function () {
-    return view('kontak.kontak');
-})->name('kontak');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

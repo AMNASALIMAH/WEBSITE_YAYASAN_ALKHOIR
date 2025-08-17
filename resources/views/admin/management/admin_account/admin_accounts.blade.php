@@ -188,7 +188,7 @@
         <div class="mt-3">
             <div class="flex items-center justify-between mb-4">
                 <h3 id="modalTitle" class="text-lg font-medium text-gray-900">Tambah Akun Admin</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                <button onclick="closeDeleteModalTambah()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -242,7 +242,7 @@
                     <button type="submit" id="submitBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                         Simpan
                     </button>
-                    <button type="button" onclick="closeModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                    <button type="button" onclick="closeDeleteModalTambah()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
                         Batal
                     </button>
                 </div>
