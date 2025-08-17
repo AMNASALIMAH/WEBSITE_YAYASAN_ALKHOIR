@@ -7,46 +7,7 @@
 
 <div class="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
     
-<div class="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
-    <!-- Header Section -->
-    <div class="bg-white shadow-sm border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Manajemen Pemasukan</h1>
-                    <p class="mt-2 text-gray-600">Kelola semua data pemasukan dan pembayaran SPP</p>
-                </div>
-                <div class="flex space-x-3">
-                    <button onclick="openIncomeModal()" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-all duration-200 hover:shadow-lg">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                        </svg>
-                        Tambah Pemasukan
-                    </button>
-                    <a href="{{ route('admin.management.finance.pemasukan') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-all duration-200 hover:shadow-lg">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                        </svg>
-                        Kembali
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Content Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div class="text-center">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">Modal Pemasukan</h3>
-                <p class="mt-1 text-sm text-gray-500">Klik tombol "Tambah Pemasukan" di atas untuk membuka modal</p>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Income Modal -->
 <div id="incomeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
@@ -54,11 +15,11 @@
         <div class="mt-3">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-900" id="modalTitle">Tambah Pemasukan</h3>
-                <button onclick="closeIncomeModal()" class="text-gray-400 hover:text-gray-600">
+                <a href="{{ route('admin.management.finance.income.create') }}" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
-                </button>
+                </a>
             </div>
             
             <form id="incomeForm" class="space-y-4">

@@ -268,6 +268,12 @@ function filterTable(inputId, tbodyId) {
 }
 
 function showToast(message, theme = 'success') {
+    // Ensure document.body exists
+    if (!document.body) {
+        console.warn('Document body not ready for toast');
+        return;
+    }
+    
     let root = document.getElementById('toast-root');
     if (!root) {
         root = document.createElement('div');
@@ -275,18 +281,29 @@ function showToast(message, theme = 'success') {
         root.className = 'fixed bottom-4 right-4 z-50 space-y-2 pointer-events-none';
         document.body.appendChild(root);
     }
+    
     const color = theme === 'error' ? 'bg-red-600' : theme === 'warning' ? 'bg-yellow-600' : 'bg-emerald-600';
     const toast = document.createElement('div');
     toast.className = `${color} text-white px-4 py-3 rounded-lg shadow-lg pointer-events-auto transition transform duration-300 translate-y-2 opacity-0`;
-    toast.innerHTML = `<div class="flex items-center gap-2"><span class="text-sm">${message}</span><button class="ml-2/ pointer-events-auto" onclick="this.parentElement.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button></div>`;
-    root.appendChild(toast);
-    requestAnimationFrame(() => {
-        toast.classList.remove('translate-y-2', 'opacity-0');
-    });
-    setTimeout(() => {
-        toast.classList.add('translate-y-2', 'opacity-0');
-        setTimeout(() => toast.remove(), 200);
-    }, 3000);
+    toast.innerHTML = `<div class="flex items-center gap-2"><span class="text-sm">${message}</span><button class="ml-2 pointer-events-auto" onclick="this.parentElement.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button></div>`;
+    
+    // Ensure root exists before appending
+    if (root && root.parentNode) {
+        root.appendChild(toast);
+        requestAnimationFrame(() => {
+            toast.classList.remove('translate-y-2', 'opacity-0');
+        });
+        setTimeout(() => {
+            toast.classList.add('translate-y-2', 'opacity-0');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 200);
+        }, 3000);
+    } else {
+        console.warn('Toast root not properly initialized');
+    }
 }
 
 function loadContent(type) {

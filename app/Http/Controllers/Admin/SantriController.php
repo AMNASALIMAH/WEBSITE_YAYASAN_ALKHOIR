@@ -109,21 +109,40 @@ class SantriController extends Controller
         }
     }
 
-    public function destroy(Student $student)
+    public function destroy($id)
     {
         try {
+            \Log::info('Attempting to delete student with ID: ' . $id);
+            
+            // Find the student including soft-deleted ones
+            $student = Student::withTrashed()->find($id);
+            
+            if (!$student) {
+                \Log::warning('Student not found with ID: ' . $id);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data santri tidak ditemukan'
+                ], 404);
+            }
+            
+            \Log::info('Found student: ' . $student->nama_lengkap . ' (ID: ' . $student->id . ')');
+            
             // Delete photo if exists
             if ($student->foto) {
                 Storage::disk('public')->delete($student->foto);
+                \Log::info('Deleted photo: ' . $student->foto);
             }
             
-            $student->delete();
+            // Use forceDelete to permanently remove from database
+            $deleted = $student->forceDelete();
+            \Log::info('Student deletion result: ' . ($deleted ? 'success' : 'failed'));
             
             return response()->json([
                 'success' => true,
                 'message' => 'Data santri berhasil dihapus'
             ]);
         } catch (\Exception $e) {
+            \Log::error('Error deleting student: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menghapus data santri: ' . $e->getMessage()
@@ -139,21 +158,30 @@ class SantriController extends Controller
         ]);
 
         try {
-            $students = Student::whereIn('id', $request->ids)->get();
+            \Log::info('Attempting bulk delete for student IDs: ' . implode(', ', $request->ids));
+            
+            // Find students including soft-deleted ones
+            $students = Student::withTrashed()->whereIn('id', $request->ids)->get();
+            
+            \Log::info('Found ' . $students->count() . ' students for bulk delete');
             
             foreach ($students as $student) {
                 if ($student->foto) {
                     Storage::disk('public')->delete($student->foto);
+                    \Log::info('Deleted photo for student ' . $student->id . ': ' . $student->foto);
                 }
             }
             
-            Student::whereIn('id', $request->ids)->delete();
+            // Use forceDelete to permanently remove from database
+            $deletedCount = Student::withTrashed()->whereIn('id', $request->ids)->forceDelete();
+            \Log::info('Bulk delete result: ' . $deletedCount . ' records deleted');
             
             return response()->json([
                 'success' => true,
                 'message' => count($request->ids) . ' data santri berhasil dihapus'
             ]);
         } catch (\Exception $e) {
+            \Log::error('Error bulk deleting students: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menghapus data santri: ' . $e->getMessage()

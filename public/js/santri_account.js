@@ -518,14 +518,32 @@ class StudentManager {
         document.getElementById('nama_lengkap').value = student.nama_lengkap;
         document.getElementById('nama_panggilan').value = student.nama_panggilan || '';
         document.getElementById('tempat_lahir').value = student.tempat_lahir;
-        document.getElementById('tanggal_lahir').value = student.tanggal_lahir;
+        
+        // Format dates for HTML date inputs (YYYY-MM-DD format)
+        if (student.tanggal_lahir) {
+            const tanggalLahir = new Date(student.tanggal_lahir);
+            const formattedTanggalLahir = tanggalLahir.toISOString().split('T')[0];
+            document.getElementById('tanggal_lahir').value = formattedTanggalLahir;
+            console.log('Original tanggal_lahir:', student.tanggal_lahir);
+            console.log('Formatted tanggal_lahir:', formattedTanggalLahir);
+        }
+        
         document.getElementById('jenis_kelamin').value = student.jenis_kelamin;
         document.getElementById('agama').value = student.agama;
         document.getElementById('alamat').value = student.alamat;
         document.getElementById('program_id').value = student.program_id;
         document.getElementById('kelas').value = student.kelas;
         document.getElementById('status').value = student.status;
-        document.getElementById('tanggal_masuk').value = student.tanggal_masuk;
+        
+        // Format dates for HTML date inputs (YYYY-MM-DD format)
+        if (student.tanggal_masuk) {
+            const tanggalMasuk = new Date(student.tanggal_masuk);
+            const formattedTanggalMasuk = tanggalMasuk.toISOString().split('T')[0];
+            document.getElementById('tanggal_masuk').value = formattedTanggalMasuk;
+            console.log('Original tanggal_masuk:', student.tanggal_masuk);
+            console.log('Formatted tanggal_masuk:', formattedTanggalMasuk);
+        }
+        
         document.getElementById('nama_ortu').value = student.nama_ortu;
         document.getElementById('telepon_ortu').value = student.telepon_ortu;
         document.getElementById('email_ortu').value = student.email_ortu || '';
@@ -783,7 +801,11 @@ class StudentManager {
                 }
             });
             
+            console.log('Delete response status:', response.status);
+            console.log('Delete response headers:', response.headers);
+            
             const data = await response.json();
+            console.log('Delete response data:', data);
             
             if (data.success) {
                 this.showSuccess(data.message);
