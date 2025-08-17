@@ -65,7 +65,7 @@ class ProfileYayasanController extends Controller
             // Clear cache to ensure updated data is used
             Cache::forget('yayasan_profile_data');
 
-            return redirect('/dashboard')->with('success', 'Profil yayasan berhasil diperbarui.');
+            return redirect('/admin/management/profile/yayasan')->with('success', 'Profil yayasan berhasil diperbarui.');
         } catch (\Exception $e) {
             Log::error('Error updating profile yayasan', ['error' => $e->getMessage()]);
             return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui profil yayasan.']);
