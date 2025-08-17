@@ -16,7 +16,7 @@ class SantriController extends Controller
     public function getManagementStudentsContent()
     {
         $students = Student::with('program')->latest()->paginate(10);
-        $programs = Program::where('status', 'active')->get();
+        $programs = Program::active()->get();
         
         return view('admin.management.data_santri.view_students', compact('students', 'programs'));
     }
@@ -44,6 +44,14 @@ class SantriController extends Controller
     public function store(StudentRequest $request)
     {
         try {
+            // Check if NIS already exists
+            if (Student::where('nis', $request->nis)->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'NIS sudah digunakan'
+                ], 422);
+            }
+            
             $data = $request->validated();
             
             if ($request->hasFile('foto')) {

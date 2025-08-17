@@ -255,6 +255,8 @@
 
 <script src="{{ asset('js/admin_account.js') }}" defer></script>
 
+<script src="{{ asset('js/santri_account.js') }}" defer></script>
+
 
 
 <script>

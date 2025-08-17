@@ -292,19 +292,27 @@ function showToast(message, theme = 'success') {
 function loadContent(type) {
     const mainContent = document.getElementById('main-content');
     
+    console.log(`loadContent called with type: ${type}`);
+    console.log(`Current content type: ${currentContentType}`);
+    console.log(`Navigation necessary:`, isNavigationNecessary(type));
+    
     // Prevent multiple simultaneous loading operations
     if (window.isLoadingContent) {
         console.log('Content loading already in progress, skipping...');
         return;
     }
     
-    // Check if we're already on the requested content
-    if (isAlreadyOnContent(type)) {
-        console.log(`Already on content type: ${type}, skipping...`);
+    // Check if navigation is necessary
+    if (!isNavigationNecessary(type)) {
+        console.log(`Navigation not necessary for type: ${type}, skipping...`);
         return;
     }
     
+    console.log(`Starting to load content for type: ${type}`);
     window.isLoadingContent = true;
+    
+    // Update current content type
+    currentContentType = type;
     
     // Add timeout to reset loading flag in case something goes wrong
     setTimeout(() => {
@@ -414,8 +422,9 @@ function loadContent(type) {
                 history.pushState(
                     {content: 'mgmt-students'},
                     'Data Santri',
-                    '/admin/management/data-santri/content'
+                    '/admin/management/students'
                 );
+                window.isLoadingContent = false;
             })
                 .catch(error => {
                     console.error('Error loading content:', error);
@@ -424,6 +433,7 @@ function loadContent(type) {
                             <p class="text-red-700">Error loading content. Please try again.</p>
                         </div>
                     `;
+                    window.isLoadingContent = false;
                 });
             break;
         case 'mgmt-finance':
@@ -576,19 +586,73 @@ function loadContent(type) {
     }
 }
 
+// Function to track current content state
+let currentContentType = null;
+
+// Function to handle sidebar navigation intelligently
+function handleSidebarNavigation(type) {
+    console.log(`Sidebar navigation requested for type: ${type}`);
+    
+    // Check if navigation is necessary
+    if (!isNavigationNecessary(type)) {
+        console.log(`Sidebar navigation not necessary for type: ${type}`);
+        return;
+    }
+    
+    // Load the content
+    loadContent(type);
+}
+
+// Function to check if navigation is necessary
+function isNavigationNecessary(type) {
+    // If we're already on this content type, navigation is not necessary
+    if (currentContentType === type) {
+        console.log(`Navigation not necessary: already on content type ${type}`);
+        return false;
+    }
+    
+    // If the content is already loaded in the DOM, navigation is not necessary
+    if (isAlreadyOnContent(type)) {
+        console.log(`Navigation not necessary: content already loaded for type ${type}`);
+        return false;
+    }
+    
+    console.log(`Navigation necessary for content type: ${type}`);
+    return true;
+}
+
 // Function to check if we're already on the requested content
 function isAlreadyOnContent(type) {
     const mainContent = document.getElementById('main-content');
-    if (!mainContent) return false;
+    if (!mainContent) {
+        console.log(`isAlreadyOnContent: mainContent not found for type: ${type}`);
+        return false;
+    }
+    
+    // Check if we're already on this content type
+    if (currentContentType === type) {
+        console.log(`isAlreadyOnContent: already on content type: ${type}`);
+        return true;
+    }
     
     // Check for specific content types
     if (type === 'mgmt-admin-accounts' || type === 'mgmt-account') {
-        return mainContent.querySelector('#admin-accounts-content') !== null;
+        const content = mainContent.querySelector('#admin-accounts-content');
+        console.log(`isAlreadyOnContent: checking admin accounts content:`, content !== null);
+        return content !== null;
+    }
+    
+    if (type === 'mgmt-students') {
+        const content = mainContent.querySelector('#students-content');
+        console.log(`isAlreadyOnContent: checking students content:`, content !== null);
+        return content !== null;
     }
     
     // General check for other content types
     const existingContent = mainContent.querySelector('[data-content]');
-    return existingContent && existingContent.getAttribute('data-content') === type;
+    const result = existingContent && existingContent.getAttribute('data-content') === type;
+    console.log(`isAlreadyOnContent: general check for type ${type}:`, result);
+    return result;
 }
 
 // Function to clean up duplicate sidebars
@@ -625,14 +689,28 @@ function cleanupDuplicateSidebars() {
 function cleanupMainContent() {
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
+        console.log('Cleaning up main content...');
+        
         // Remove any existing content
         mainContent.innerHTML = '';
         
         // Clean up any existing event listeners or references
         if (window.adminAccountsManager) {
+            console.log('Cleaning up adminAccountsManager...');
             window.adminAccountsManager.cleanup();
             window.adminAccountsManager = null;
         }
+        
+        if (window.studentManager) {
+            console.log('Cleaning up studentManager...');
+            window.studentManager.cleanup();
+            window.studentManager = null;
+        }
+        
+        // Reset current content type
+        currentContentType = null;
+        
+        console.log('Main content cleanup completed');
     }
 }
 

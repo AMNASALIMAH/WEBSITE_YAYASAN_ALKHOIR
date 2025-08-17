@@ -1,315 +1,338 @@
-// Program Management JavaScript
-class ProgramManager {
-    constructor() {
-        this.csrfToken = this.getCsrfToken();
-        this.initializeEventListeners();
-    }
+function programManager() {
+    return {
+        programs: @json($programs ?? []),
+        categories: @json($categories ?? []),
+        showModal: false,
+        showCategoryModal: false,
+        editingProgram: null,
+        searchQuery: '',
+        statusFilter: '',
+        categoryFilter: '',
+        newCategory: '',
+        showToast: false,
+        toastMessage: '',
+        toastType: 'success',
+        loading: false,
+        form: {
+            name: '',
+            description: '',
+            category: '',
+            status: 'active',
+            image: null
+        },
 
-    getCsrfToken() {
-        return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
-               document.querySelector('input[name="_token"]')?.value ||
-               this.getCookie('XSRF-TOKEN');
-    }
-
-    getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-        return null;
-    }
-
-    initializeEventListeners() {
-        // Add any additional event listeners here
-        document.addEventListener('DOMContentLoaded', () => {
-            this.setupTooltips();
-            this.setupKeyboardShortcuts();
-        });
-    }
-
-    setupTooltips() {
-        // Initialize tooltips for better UX
-        const tooltipElements = document.querySelectorAll('[title]');
-        tooltipElements.forEach(element => {
-            element.addEventListener('mouseenter', (e) => {
-                this.showTooltip(e.target, e.target.title);
+        get filteredPrograms() {
+            return this.programs.filter(program => {
+                const matchesSearch = program.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                                    (program.description && program.description.toLowerCase().includes(this.searchQuery.toLowerCase()));
+                const matchesStatus = !this.statusFilter || program.status === this.statusFilter;
+                const matchesCategory = !this.categoryFilter || program.category === this.categoryFilter;
+                
+                return matchesSearch && matchesStatus && matchesCategory;
             });
-            
-            element.addEventListener('mouseleave', () => {
-                this.hideTooltip();
-            });
-        });
-    }
+        },
 
-    showTooltip(element, text) {
-        const tooltip = document.createElement('div');
-        tooltip.className = 'fixed z-50 px-2 py-1 text-sm text-white bg-gray-900 rounded shadow-lg pointer-events-none';
-        tooltip.textContent = text;
-        tooltip.id = 'custom-tooltip';
-        
-        document.body.appendChild(tooltip);
-        
-        const rect = element.getBoundingClientRect();
-        tooltip.style.left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2) + 'px';
-        tooltip.style.top = rect.top - tooltip.offsetHeight - 8 + 'px';
-        
-        // Add animation
-        tooltip.style.opacity = '0';
-        tooltip.style.transform = 'translateY(10px)';
-        tooltip.style.transition = 'all 0.2s ease-out';
-        
-        setTimeout(() => {
-            tooltip.style.opacity = '1';
-            tooltip.style.transform = 'translateY(0)';
-        }, 10);
-    }
+        get activeProgramsCount() {
+            return this.programs.filter(p => p.status === 'active').length;
+        },
 
-    hideTooltip() {
-        const tooltip = document.getElementById('custom-tooltip');
-        if (tooltip) {
-            tooltip.style.opacity = '0';
-            tooltip.style.transform = 'translateY(10px)';
-            setTimeout(() => {
-                if (tooltip.parentNode) {
-                    tooltip.parentNode.removeChild(tooltip);
-                }
-            }, 200);
-        }
-    }
-
-    setupKeyboardShortcuts() {
-        document.addEventListener('keydown', (e) => {
-            // Ctrl/Cmd + N for new program
-            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-                e.preventDefault();
-                const newButton = document.querySelector('[data-action="new-program"]');
-                if (newButton) newButton.click();
+        openModal(type) {
+            if (type === 'create') {
+                this.editingProgram = null;
+                this.resetForm();
+                this.showModal = true;
+            } else if (type === 'category') {
+                this.showCategoryModal = true;
             }
-            
-            // Escape to close modals
-            if (e.key === 'Escape') {
-                this.closeAllModals();
-            }
-        });
-    }
+        },
 
-    closeAllModals() {
-        // Close any open modals
-        const modals = document.querySelectorAll('[x-show]');
-        modals.forEach(modal => {
-            if (modal.style.display !== 'none') {
-                modal.style.display = 'none';
-            }
-        });
-    }
+        closeModal() {
+            this.showModal = false;
+            this.editingProgram = null;
+            this.resetForm();
+        },
 
-    // Utility function to show loading state
-    showLoading(element) {
-        const originalText = element.textContent;
-        element.textContent = 'Memuat...';
-        element.disabled = true;
-        element.classList.add('opacity-50');
-        
-        return () => {
-            element.textContent = originalText;
-            element.disabled = false;
-            element.classList.remove('opacity-50');
-        };
-    }
+        closeCategoryModal() {
+            this.showCategoryModal = false;
+            this.newCategory = '';
+        },
 
-    // Utility function to format currency
-    formatCurrency(amount) {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR'
-        }).format(amount);
-    }
-
-    // Utility function to format date
-    formatDate(dateString) {
-        if (!dateString) return '-';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('id-ID', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    }
-
-    // Utility function to validate form
-    validateForm(formData) {
-        const errors = [];
-        
-        if (!formData.get('name')?.trim()) {
-            errors.push('Nama program wajib diisi');
-        }
-        
-        if (!formData.get('category')?.trim()) {
-            errors.push('Kategori wajib dipilih');
-        }
-        
-        if (!formData.get('status')) {
-            errors.push('Status wajib dipilih');
-        }
-        
-        return errors;
-    }
-
-    // Utility function to show error messages
-    showErrors(errors) {
-        if (errors.length === 0) return;
-        
-        const errorHtml = errors.map(error => `<li>${error}</li>`).join('');
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4';
-        errorDiv.innerHTML = `
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <i class="fas fa-exclamation-triangle text-red-400"></i>
-                </div>
-                <div class="ml-3">
-                    <h3 class="text-sm font-medium text-red-800">Terdapat kesalahan:</h3>
-                    <div class="mt-2 text-sm text-red-700">
-                        <ul class="list-disc pl-5 space-y-1">
-                            ${errorHtml}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        // Insert error message at the top of the form
-        const form = document.querySelector('form');
-        if (form) {
-            form.insertBefore(errorDiv, form.firstChild);
-            
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                if (errorDiv.parentNode) {
-                    errorDiv.parentNode.removeChild(errorDiv);
-                }
-            }, 5000);
-        }
-    }
-
-    // Utility function to debounce search
-    debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
+        resetForm() {
+            this.form = {
+                name: '',
+                description: '',
+                category: '',
+                status: 'active',
+                image: null
             };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
+        },
 
-    // Export data functionality
-    exportToCSV(data, filename = 'programs.csv') {
-        const headers = ['Nama Program', 'Kategori', 'Status', 'Deskripsi', 'Tanggal Dibuat'];
-        const csvContent = [
-            headers.join(','),
-            ...data.map(item => [
-                `"${item.name}"`,
-                `"${item.category}"`,
-                `"${item.status === 'active' ? 'Aktif' : 'Nonaktif'}"`,
-                `"${item.description || ''}"`,
-                `"${this.formatDate(item.created_at)}"`
-            ].join(','))
-        ].join('\n');
-        
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', filename);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+        editProgram(program) {
+            this.editingProgram = program;
+            this.form = {
+                name: program.name,
+                description: program.description || '',
+                category: program.category,
+                status: program.status,
+                image: null
+            };
+            this.showModal = true;
+        },
 
-    // Print functionality
-    printPrograms() {
-        const printWindow = window.open('', '_blank');
-        const programs = this.getProgramsData();
-        
-        const printContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Daftar Program - Yayasan Al-Khoir</title>
-                <style>
-                    body { font-family: Arial, sans-serif; margin: 20px; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    th { background-color: #f2f2f2; }
-                    .header { text-align: center; margin-bottom: 30px; }
-                    .header h1 { color: #2563eb; margin-bottom: 10px; }
-                    .header p { color: #6b7280; }
-                    @media print {
-                        .no-print { display: none; }
+        async saveProgram() {
+            try {
+                this.loading = true;
+                const formData = new FormData();
+                formData.append('name', this.form.name);
+                formData.append('description', this.form.description);
+                formData.append('category', this.form.category);
+                formData.append('status', this.form.status);
+                if (this.form.image) {
+                    formData.append('image', this.form.image);
+                }
+
+                const url = this.editingProgram 
+                    ? `/admin/programs/${this.editingProgram.id}`
+                    : '/admin/programs';
+                
+                const method = this.editingProgram ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                     }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <h1>Daftar Program Yayasan Al-Khoir</h1>
-                    <p>Dicetak pada: ${this.formatDate(new Date())}</p>
-                </div>
-                
-                <table>
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Program</th>
-                            <th>Kategori</th>
-                            <th>Status</th>
-                            <th>Deskripsi</th>
-                            <th>Tanggal Dibuat</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${programs.map((program, index) => `
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    this.showToastMessage(result.message, 'success');
+                    this.closeModal();
+                    await this.loadPrograms();
+                } else {
+                    this.showToastMessage(result.message, 'error');
+                }
+            } catch (error) {
+                this.showToastMessage('Terjadi kesalahan saat menyimpan program', 'error');
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async deleteProgram(program) {
+            if (!confirm('Apakah Anda yakin ingin menghapus program ini?')) return;
+
+            try {
+                this.loading = true;
+                const response = await fetch(`/admin/programs/${program.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    this.showToastMessage(result.message, 'success');
+                    await this.loadPrograms();
+                } else {
+                    this.showToastMessage(result.message, 'error');
+                }
+            } catch (error) {
+                this.showToastMessage('Terjadi kesalahan saat menghapus program', 'error');
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async toggleStatus(program) {
+            try {
+                this.loading = true;
+                const response = await fetch(`/admin/programs/${program.id}/toggle-status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    this.showToastMessage(result.message, 'success');
+                    await this.loadPrograms();
+                } else {
+                    this.showToastMessage(result.message, 'error');
+                }
+            } catch (error) {
+                this.showToastMessage('Terjadi kesalahan saat mengubah status', 'error');
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async addCategory() {
+            if (!this.newCategory.trim()) return;
+
+            if (!this.categories.includes(this.newCategory)) {
+                this.categories.push(this.newCategory);
+                this.newCategory = '';
+                this.showToastMessage('Kategori berhasil ditambahkan', 'success');
+            } else {
+                this.showToastMessage('Kategori sudah ada', 'error');
+            }
+        },
+
+        removeCategory(category) {
+            if (this.programs.some(p => p.category === category)) {
+                this.showToastMessage('Kategori tidak dapat dihapus karena masih digunakan', 'error');
+                return;
+            }
+
+            this.categories = this.categories.filter(c => c !== category);
+            this.showToastMessage('Kategori berhasil dihapus', 'success');
+        },
+
+        handleImageUpload(event) {
+            this.form.image = event.target.files[0];
+        },
+
+        async loadPrograms() {
+            try {
+                this.loading = true;
+                const response = await fetch('/admin/programs');
+                const result = await response.json();
+                if (result.success) {
+                    this.programs = result.data;
+                }
+            } catch (error) {
+                console.error('Error loading programs:', error);
+                this.showToastMessage('Gagal memuat data program', 'error');
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        showToastMessage(message, type = 'success') {
+            this.toastMessage = message;
+            this.toastType = type;
+            this.showToast = true;
+            setTimeout(() => this.hideToast(), 5000);
+        },
+
+        hideToast() {
+            this.showToast = false;
+        },
+
+        formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        },
+
+        exportToCSV() {
+            const data = this.programs.map(program => ({
+                name: program.name,
+                category: program.category,
+                status: program.status === 'active' ? 'Aktif' : 'Nonaktif',
+                description: program.description || '',
+                created_at: this.formatDate(program.created_at)
+            }));
+            
+            const headers = ['Nama Program', 'Kategori', 'Status', 'Deskripsi', 'Tanggal Dibuat'];
+            const csvContent = [
+                headers.join(','),
+                ...data.map(item => [
+                    `"${item.name}"`,
+                    `"${item.category}"`,
+                    `"${item.status}"`,
+                    `"${item.description}"`,
+                    `"${item.created_at}"`
+                ].join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `programs-${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            this.showToastMessage('Data berhasil diexport ke CSV', 'success');
+        },
+
+        printPrograms() {
+            const printWindow = window.open('', '_blank');
+            const programs = this.programs;
+            
+            const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Daftar Program - Yayasan Al-Khoir</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        .header { text-align: center; margin-bottom: 30px; }
+                        .header h1 { color: #2563eb; margin-bottom: 10px; }
+                        .header p { color: #6b7280; }
+                        @media print {
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Daftar Program Yayasan Al-Khoir</h1>
+                        <p>Dicetak pada: ${this.formatDate(new Date())}</p>
+                    </div>
+                    
+                    <table>
+                        <thead>
                             <tr>
-                                <td>${index + 1}</td>
-                                <td>${program.name}</td>
-                                <td>${program.category}</td>
-                                <td>${program.status === 'active' ? 'Aktif' : 'Nonaktif'}</td>
-                                <td>${program.description || '-'}</td>
-                                <td>${this.formatDate(program.created_at)}</td>
+                                <th>No</th>
+                                <th>Nama Program</th>
+                                <th>Kategori</th>
+                                <th>Status</th>
+                                <th>Deskripsi</th>
+                                <th>Tanggal Dibuat</th>
                             </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-                
-                <div class="no-print" style="margin-top: 30px; text-align: center;">
-                    <button onclick="window.print()">Cetak</button>
-                    <button onclick="window.close()">Tutup</button>
-                </div>
-            </body>
-            </html>
-        `;
-        
-        printWindow.document.write(printContent);
-        printWindow.document.close();
+                        </thead>
+                        <tbody>
+                            ${programs.map((program, index) => `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${program.name}</td>
+                                    <td>${program.category}</td>
+                                    <td>${program.status === 'active' ? 'Aktif' : 'Nonaktif'}</td>
+                                    <td>${program.description || '-'}</td>
+                                    <td>${this.formatDate(program.created_at)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    
+                    <div class="no-print" style="margin-top: 30px; text-align: center;">
+                        <button onclick="window.print()">Cetak</button>
+                        <button onclick="window.close()">Tutup</button>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+        }
     }
-
-    getProgramsData() {
-        // This should be implemented based on your data structure
-        // For now, returning empty array
-        return [];
-    }
-}
-
-// Initialize the program manager when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    window.programManager = new ProgramManager();
-});
-
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = ProgramManager;
 }

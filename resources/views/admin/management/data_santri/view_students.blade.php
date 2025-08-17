@@ -1,7 +1,7 @@
 @extends('admin.app')
 
 @section('content')
-<div class="min-h-screen bg-gray-50 py-8">
+<div class="min-h-screen bg-gray-50 py-8" data-content="mgmt-students" id="students-content">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header Section -->
         <div class="mb-8">
@@ -42,9 +42,13 @@
                     <label for="programFilter" class="block text-sm font-medium text-gray-700 mb-2">Program</label>
                     <select id="programFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200">
                         <option value="">Semua Program</option>
-                        @foreach($programs as $program)
-                            <option value="{{ $program->id }}">{{ $program->nama_program }}</option>
-                        @endforeach
+                        @if(isset($programs) && count($programs) > 0)
+                            @foreach($programs as $program)
+                                <option value="{{ isset($program->id) ? $program->id : '' }}">{{ isset($program->name) ? $program->name : 'Program Tidak Diketahui' }}</option>
+                            @endforeach
+                        @else
+                            <option value="">Tidak ada program tersedia</option>
+                        @endif
                     </select>
                 </div>
                 <div class="flex items-end">
@@ -89,7 +93,70 @@
                         </tr>
                     </thead>
                     <tbody id="studentsTableBody" class="bg-white divide-y divide-gray-200">
-                        <!-- Students will be loaded here dynamically -->
+                        @if(isset($students) && count($students) > 0)
+                            @foreach($students as $student)
+                                <tr class="hover:bg-gray-50 transition-colors duration-150" data-student-id="{{ $student->id }}">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input type="checkbox" class="student-checkbox rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="{{ $student->id }}">
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <img class="h-10 w-10 rounded-full object-cover" 
+                                                 src="{{ $student->foto ? asset('storage/' . $student->foto) : asset('assets/images/default-avatar.png') }}" 
+                                                 alt="{{ $student->nama_lengkap }}"
+                                                 onerror="this.onerror=null; this.src='{{ asset('assets/images/default-avatar.png') }}';">
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">{{ $student->nis }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">{{ $student->nama_lengkap }}</div>
+                                        <div class="text-sm text-gray-500">{{ $student->nama_panggilan ?? '' }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ $student->program->name ?? '-' }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ $student->kelas }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
+                                            @if($student->status === 'aktif') bg-green-100 text-green-800
+                                            @elseif($student->status === 'nonaktif') bg-red-100 text-red-800
+                                            @elseif($student->status === 'lulus') bg-blue-100 text-blue-800
+                                            @elseif($student->status === 'pindah') bg-yellow-100 text-yellow-800
+                                            @else bg-gray-100 text-gray-800
+                                            @endif">
+                                            @if($student->status === 'aktif') Aktif
+                                            @elseif($student->status === 'nonaktif') Nonaktif
+                                            @elseif($student->status === 'lulus') Lulus
+                                            @elseif($student->status === 'pindah') Pindah
+                                            @else {{ $student->status }}
+                                            @endif
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex space-x-2">
+                                            <button onclick="studentManager.editStudent({{ $student->id }})" 
+                                                    class="text-indigo-600 hover:text-indigo-900 transition-colors duration-200"
+                                                    title="Edit Santri">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                </svg>
+                                            </button>
+                                            <button onclick="studentManager.deleteStudent({{ $student->id }})" 
+                                                    class="text-red-600 hover:text-red-900 transition-colors duration-200"
+                                                    title="Hapus Santri">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -106,7 +173,7 @@
             </div>
             
             <!-- Empty State -->
-            <div id="emptyState" class="hidden p-8 text-center">
+            <div id="emptyState" class="{{ isset($students) && count($students) > 0 ? 'hidden' : '' }} p-8 text-center">
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
@@ -116,7 +183,7 @@
         </div>
 
         <!-- Pagination -->
-        <div id="pagination" class="mt-6 flex items-center justify-between">
+        <div id="pagination" class="mt-6 flex items-center justify-between {{ isset($students) && count($students) > 0 ? '' : 'hidden' }}">
             <div class="flex-1 flex justify-between sm:hidden">
                 <button id="prevPageMobile" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                     Sebelumnya
@@ -128,7 +195,11 @@
             <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
                     <p class="text-sm text-gray-700">
-                        Menampilkan <span id="showingFrom">1</span> sampai <span id="showingTo">10</span> dari <span id="totalItems">0</span> hasil
+                        @if(isset($students) && count($students) > 0)
+                            Menampilkan <span id="showingFrom">1</span> sampai <span id="showingTo">{{ count($students) }}</span> dari <span id="totalItems">{{ $students->total() }}</span> hasil
+                        @else
+                            Menampilkan <span id="showingFrom">0</span> sampai <span id="showingTo">0</span> dari <span id="totalItems">0</span> hasil
+                        @endif
                     </p>
                 </div>
                 <div>
@@ -234,14 +305,20 @@
                         <h4 class="text-md font-medium text-gray-900 border-b pb-2">Informasi Akademik</h4>
                         
                         <div>
-                            <label for="program_id" class="block text-sm font-medium text-gray-700 mb-1">Program *</label>
-                            <select id="program_id" name="program_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200">
-                                <option value="">Pilih Program</option>
-                                @foreach($programs as $program)
-                                    <option value="{{ $program->id }}">{{ $program->nama_program }}</option>
-                                @endforeach
+                            <label for="program_id" class="block text-sm font-medium text-black mb-1">Program *</label>
+                            <select id="program_id" name="program_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200">
+                                <option value="" class="text-black">Pilih Program</option>
+                                @if(isset($programs) && count($programs) > 0)
+                                    @foreach($programs as $program)
+                                        <option value="{{ isset($program->id) ? $program->id : '' }}" class="text-black">
+                                            {{ isset($program->name) ? $program->name : 'Program Tidak Diketahui' }}
+                                        </option>
+                                    @endforeach
+                                @else
+                                    <option value="" class="text-black">Tidak ada program tersedia</option>
+                                @endif
                             </select>
-                            <div id="program_idError" class="hidden text-red-600 text-sm mt-1"></div>
+                            <div id="program_idError" class="hidden text-black text-sm mt-1"></div>
                         </div>
                         
                         <div>

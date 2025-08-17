@@ -11,7 +11,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <script src="{{ asset('js/program-management.js') }}" defer></script>
+
     <style>
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -33,344 +33,603 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-white to-indigo-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8" x-data="programManager()">
-        <!-- Header Section -->
-        <div class="text-center mb-12 fade-in">
-            <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
-                Manajemen Program
-            </h1>
-            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                Kelola program-program Yayasan Al-Khoir dengan mudah dan efisien
-            </p>
-        </div>
+    <div class="flex min-h-screen">
+        <!-- Sidebar Utama -->
+        <aside id="admin-sidebar" class="w-64 min-h-screen bg-blue-950 text-white flex flex-col px-2 pt-1 pb-6 overflow-y-auto flex-shrink-0 relative z-10 max-w-none">
+            {{-- Logo --}}
+            <div class="flex items-center space-x-3">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="h-10 w-10 rounded" />
+                <a href="{{ url('/') }}">
+                    <span class="text-base font-bold leading-tight">
+                        YAYASAN<br>AL-KHOIR
+                    </span>
+                </a>
+            </div>
 
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover-lift transition-all">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Total Program</p>
-                        <p class="text-3xl font-bold text-gray-900" x-text="programs.length">0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-list text-blue-600 text-xl"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover-lift transition-all">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Program Aktif</p>
-                        <p class="text-3xl font-bold text-green-600" x-text="activeProgramsCount">0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover-lift transition-all">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Kategori</p>
-                        <p class="text-3xl font-bold text-purple-600" x-text="categories.length">0</p>
-                    </div>
-                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-tags text-purple-600 text-xl"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+            {{-- Garis pembatas --}}
+            <div class="border-b border-gray-300 mt-3 mb-4 w-full"></div>
 
-        <!-- Action Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 mb-8 justify-center">
-            <button @click="openModal('create')" 
-                    data-action="new-program"
-                    class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover-lift transition-all flex items-center gap-3">
-                <i class="fas fa-plus text-lg"></i>
-                Tambah Program Baru
-            </button>
-            <button @click="openModal('category')" 
-                    class="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover-lift transition-all flex items-center gap-3">
-                <i class="fas fa-tags text-lg"></i>
-                Kelola Kategori
-            </button>
-            <button @click="exportToCSV()" 
-                    class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover-lift transition-all flex items-center gap-3">
-                <i class="fas fa-download text-lg"></i>
-                Export CSV
-            </button>
-            <button @click="printPrograms()" 
-                    class="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover-lift transition-all flex items-center gap-3">
-                <i class="fas fa-print text-lg"></i>
-                Cetak
-            </button>
-        </div>
+            <nav class="space-y-2 text-sm flex-1">
 
-        <!-- Search and Filter -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
-            <div class="flex flex-col lg:flex-row gap-4">
-                <div class="flex-1">
-                    <div class="relative">
-                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" x-model="searchQuery" 
-                               placeholder="Cari program..." 
-                               class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                    </div>
-                </div>
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <select x-model="statusFilter" class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                        <option value="">Semua Status</option>
-                        <option value="active">Aktif</option>
-                        <option value="inactive">Nonaktif</option>
-                    </select>
-                    <select x-model="categoryFilter" class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                        <option value="">Semua Kategori</option>
-                        <template x-for="category in categories" :key="category">
-                            <option :value="category" x-text="category"></option>
-                        </template>
-                    </select>
-                </div>
-            </div>
-            
-            <!-- Results Summary -->
-            <div class="mt-4 pt-4 border-t border-gray-100">
-                <p class="text-sm text-gray-600">
-                    Menampilkan <span class="font-semibold" x-text="filteredPrograms.length"></span> dari <span class="font-semibold" x-text="programs.length"></span> program
-                    <span x-show="searchQuery || statusFilter || categoryFilter" x-text="` (difilter)`"></span>
-                </p>
-            </div>
-        </div>
+                <a href="{{ route('dashboard') }}"
+                    class="flex  items-center gap-2 font-semibold  text-white hover:bg-white hover:text-blue-950">
+                    <x-heroicon-o-home class="w-4 h-4" /> Dashboard
+                </a>
 
-        <!-- Programs Table -->
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-            <!-- Loading State -->
-            <div x-show="loading" class="p-12 text-center">
-                <div class="inline-flex items-center gap-3">
-                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                    <span class="text-gray-600">Memuat data program...</span>
-                </div>
-            </div>
-            
-            <!-- Table Content -->
-            <div x-show="!loading" class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
-                        <tr>
-                            <th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Program</th>
-                            <th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Kategori</th>
-                            <th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                            <th class="hidden md:table-cell px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tanggal Dibuat</th>
-                            <th class="px-4 md:px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        <template x-for="program in filteredPrograms" :key="program.id">
-                            <tr class="hover:bg-gray-50 transition-all duration-200">
-                                <td class="px-4 md:px-6 py-4">
-                                    <div class="flex items-center">
-                                        <div class="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center mr-3 md:mr-4">
-                                            <i class="fas fa-graduation-cap text-blue-600 text-sm md:text-base"></i>
-                                        </div>
-                                        <div class="min-w-0 flex-1">
-                                            <div class="font-semibold text-gray-900 text-sm md:text-base truncate" x-text="program.name"></div>
-                                            <div class="text-xs md:text-sm text-gray-500 truncate" x-text="program.description || 'Tidak ada deskripsi'"></div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 md:px-6 py-4">
-                                    <span class="inline-flex items-center px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium bg-purple-100 text-purple-800" x-text="program.category"></span>
-                                </td>
-                                <td class="px-4 md:px-6 py-4">
-                                    <span :class="program.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" 
-                                          class="inline-flex items-center px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium" x-text="program.status === 'active' ? 'Aktif' : 'Nonaktif'"></span>
-                                </td>
-                                <td class="hidden md:table-cell px-6 py-4 text-sm text-gray-500" x-text="formatDate(program.created_at)"></td>
-                                <td class="px-4 md:px-6 py-4">
-                                    <div class="flex justify-end gap-1 md:gap-2">
-                                        <button @click="editProgram(program)" 
-                                                class="p-1.5 md:p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all" 
-                                                title="Edit Program">
-                                            <i class="fas fa-edit text-sm md:text-base"></i>
-                                        </button>
-                                        <button @click="toggleStatus(program)" 
-                                                :class="program.status === 'active' ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50'"
-                                                class="p-1.5 md:p-2 rounded-lg transition-all" 
-                                                :title="program.status === 'active' ? 'Nonaktifkan' : 'Aktifkan'">
-                                            <i :class="program.status === 'active' ? 'fas fa-toggle-off' : 'fas fa-toggle-on'" class="text-sm md:text-base"></i>
-                                        </button>
-                                        <button @click="deleteProgram(program)" 
-                                                class="p-1.5 md:p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all" 
-                                                title="Hapus Program">
-                                            <i class="fas fa-trash text-sm md:text-base"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </template>
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Empty State -->
-            <div x-show="filteredPrograms.length === 0" class="text-center py-12">
-                <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-folder-open text-gray-400 text-3xl"></i>
-                </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">Tidak ada program ditemukan</h3>
-                <p class="text-gray-500 mb-4">Coba ubah filter pencarian atau tambah program baru.</p>
-                <button @click="openModal('create')" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-all">
-                    Tambah Program Pertama
-                </button>
-            </div>
-        </div>
+                <!-- Master Data untuk publik-->
+                <div x-data="{ open: false }">
+                    <button @click="open = !open"
+                        class="flex items-center gap-2 w-full text-left font-semibold  text-white hover:bg-white hover:text-blue-950">
+                        <x-heroicon-o-folder class="w-4 h-4" /> Data Info Yayasan
+                        <x-heroicon-o-chevron-down class="ml-1 w-4 h-4 transform"
+                            x-bindx-bind:class="open ? 'rotate-180' : ''" />
+                    </button>
 
-        <!-- Create/Edit Program Modal -->
-        <div x-show="showModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-                </div>
-                
-                <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full scale-in">
-                    <div class="bg-white px-6 py-4">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-2xl font-bold text-gray-900" x-text="editingProgram ? 'Edit Program' : 'Tambah Program Baru'"></h3>
-                            <button @click="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                                <i class="fas fa-times text-xl"></i>
+                    <div 
+                        x-show="open" 
+                        x-transition 
+                        @click.away="open = false" 
+                        class="ml-4 space-y-1 mt-2"
+                        @mouseenter="open = true" 
+                        @mouseleave="open = true"
+                    >
+                        <!-- Tentang Kami -->
+                        <div x-data="{ open: false }">
+                            <button @click="open = !open"
+                                class="flex items-center gap-2 w-full text-left font-semibold  text-white hover:bg-white hover:text-blue-950">
+                                <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
+                                    x-bind:class="open ? 'rotate-90' : ''" />
+                                <x-heroicon-o-building-library class="w-4 h-4" /> Tentang Kami
                             </button>
+                            <div 
+                                x-show="open" 
+                                x-transition 
+                                @click.away="open = false"
+                                class="ml-4 space-y-1"
+                                @mouseenter="open = true" 
+                                @mouseleave="open = true"
+                            >
+                                <a href="{{ route('admin.sejarah.index') }}" class="block font-semibold  text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.sejarah.*') ? 'bg-gray-200' : '' }}">📖
+                                    Sejarah</a>
+                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">🎯
+                                    Visi-Misi & Tujuan</a>
+                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">👥
+                                    Struktur</a>
+                            </div>
+                        </div>
+
+                        <!-- Program -->
+                        <div x-data="{ open: false }">
+                            <button @click="open = !open"
+                                class="flex items-center gap-2 w-full text-left font-semibold  text-white hover:bg-white hover:text-blue-950">
+                                <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
+                                    x-bind:class="open ? 'rotate-90' : ''" />
+                                <x-heroicon-o-book-open class="w-4 h-4" /> Program
+                            </button>
+                            <div 
+                                x-show="open" 
+                                x-transition 
+                                @click.away="open = false"
+                                class="ml-4 space-y-1"
+                                @mouseenter="open = true" 
+                                @mouseleave="open = true"
+                            >
+                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">🏷️
+                                    Kategori</a>
+                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">📄
+                                    Daftar</a>
+                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">📝
+                                    Konten</a>
+                            </div>
+                        </div>
+
+                        <!-- Informasi Lainnya -->
+                        <div x-data="{ open: false }">
+                            <button @click="open = !open"
+                                class="flex items-center gap-2 w-full text-left font-semibold  text-white hover:bg-white hover:text-blue-950">
+                                <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
+                                    x-bind:class="open ? 'rotate-90' : ''" />
+                                <x-heroicon-o-document-text class="w-4 h-4" /> Informasi
+
+                            </button>
+                            <div 
+                                x-show="open" 
+                                x-transition 
+                                @click.away="open = false"
+                                class="ml-4 space-y-1"
+                                @mouseenter="open = true" 
+                                @mouseleave="open = true"
+                            >
+                                <a href="#" onclick="loadContent('news')" class="block font-semibold  text-white hover:bg-white hover:text-blue-950 cursor-pointer">🗞️
+                                    Berita</a>
+                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">📥
+                                    PMB</a>
+                                <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">📅
+                                    Agenda</a>
+                                <a href="#" onclick="loadContent('galery')" class="block font-semibold  text-white hover:bg-white hover:text-blue-950 cursor-pointer">🖼️
+                                    Galeri</a>
+                            </div>
+                            
+                        </div>
+
+                        <!-- Galeri -->
+                        {{-- <a href="#"
+                            class="flex items-center gap-2 font-semibold  text-white hover:bg-white hover:text-blue-950">
+                            <x-heroicon-o-photo class="w-4 h-4" /> Galeri
+                        </a> --}}
+                    </div>
+                </div>
+
+                <!-- Manajemen Data -->
+                <div x-data="{ open: false }">
+                    <button @click="open = !open"
+                        class="flex items-center gap-2 w-full text-left font-semibold  text-white hover:bg-white hover:text-blue-950">
+                        <x-heroicon-o-folder class="w-4 h-4" /> Manejemen Data
+                        <x-heroicon-o-chevron-down class="ml-1 w-4 h-4 transform"
+                            x-bindx-bind:class="open ? 'rotate-180' : ''" />
+
+
+                    </button>
+
+                    <div 
+                        x-show="open" 
+                        x-transition 
+                        @click.away="open = false" 
+                        class="ml-4 space-y-2 mt-2"
+                        @mouseenter="open = true" 
+                        @mouseleave="open = true"
+                    >
+                        <a href="#" onclick="loadContent('mgmt-profile')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">🏛️ Profil Yayasan</a>
+                
+                        <div x-data="{ open: false }">
+                            <button @click="open = !open"
+                                class="flex items-center gap-2 w-full text-left font-semibold  text-white hover:bg-white hover:text-blue-950">
+                                <span class="ml-1">▶️</span> 🗂️ Kategori Class
+                            </button>
+                            <div 
+                                x-show="open" 
+                                x-transition 
+                                @click.away="open = false"
+                                class="ml-4 space-y-1"
+                                @mouseenter="open = true" 
+                                @mouseleave="open = true"
+                            >
+                            <div x-data="{ open: false }">
+                                <button @click="open = !open"
+                                    class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950">
+                                    <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
+                                        x-bind:class="open ? 'rotate-90' : ''" />👨‍🏫 Data Guru
+                                </button>
+                                <div 
+                                    x-show="open" 
+                                    x-transition 
+                                    @click.away="open = false"
+                                    class="ml-4 space-y-1"
+                                    @mouseenter="open = true" 
+                                    @mouseleave="open = true"
+                                >
+                                    <a href="#" onclick="loadContent('mgmt-teachers')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📋 Daftar Guru</a>
+                                    <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">🏫 Kelas Guru</a>
+                                </div>
+                            </div>
+        
+
+                            <div x-data="{ open: false }">
+                                <button @click="open = !open"
+                                    class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950">
+                                    <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
+                                        x-bind:class="open ? 'rotate-90' : ''" />👨‍🎓 Data Santri
+                                </button>
+                                <div 
+                                    x-show="open" 
+                                    x-transition 
+                                    @click.away="open = false"
+                                    class="ml-4 space-y-1"
+                                    @mouseenter="open = true" 
+                                    @mouseleave="open = true"
+                                >
+                                    <a href="#" onclick="loadContent('admin.management.data-santri.content')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📋 Daftar Santri</a>
+                                    <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">➕ Tambah Santri</a>
+                                    <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">🏫 Kelas / Tingkatan</a>
+                                    <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950">📦 Alumni / Keluar</a>
+                                </div>
+                            </div>
+                            </div>
+
+                            
+
+                            
+                            
+                        </div>
+
+                
+                        <div x-data="{ open: false }">
+                            <button @click="open = !open"
+                                class="flex items-center gap-2 w-full text-left font-semibold text-white hover:bg-white hover:text-blue-950">
+                                <x-heroicon-o-chevron-right class="ml-1 w-4 h-4 transform"
+                                    x-bind:class="open ? 'rotate-90' : ''" />💰 Data Keuangan
+                            </button>
+                            <div 
+                                x-show="open" 
+                                x-transition 
+                                @click.away="open = false"
+                                class="ml-4 space-y-1"
+                                @mouseenter="open = true" 
+                                @mouseleave="open = true"
+                            >
+                                <a href="#" onclick="loadContent('mgmt-finance')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📊 Laporan Keuangan</a>
+                                <a href="#" onclick="loadContent('mgmt-finance-pemasukan')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">💵 Pemasukan</a>
+                                <a href="#" onclick="loadContent('mgmt-finance-pengeluaran')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">💸 Pengeluaran</a>
+                            </div>
+                        </div>
+                        <a href="#" onclick="loadContent('mgmt-account')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">👤 Perbarui Akun Profil</a>
+                        <a href="#" onclick="loadContent('mgmt-messages')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">✉️ Pesan Masuk</a>
+                        <a href="#" onclick="loadContent('mgmt-applications')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📝 Formulir Masuk</a>
+                        <a href="#" onclick="loadContent('mgmt-admin-accounts')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">🧑‍💼 Data Akun Pengurus</a>
+                        <a href="#" onclick="loadContent('mgmt-programs')" class="block font-semibold text-white hover:bg-white hover:text-blue-950 cursor-pointer">📚 Data Program</a>
+                    </div>
+                </div>
+
+
+
+                <!-- Kontak -->
+                <a href="#"
+                    class="flex items-center gap-2 font-semibold  text-white hover:bg-white hover:text-blue-950">
+                    <x-heroicon-o-phone class="w-4 h-4" /> Kontak
+                </a>
+
+                <!-- Pengguna -->
+                <a href="#"
+                    class="flex items-center gap-2 font-semibold  text-white hover:bg-white hover:text-blue-950">
+                    <x-heroicon-o-users class="w-4 h-4" /> Pengguna
+                </a>
+            </nav>
+        </aside>
+        <!-- End Sidebar -->
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col">
+            <div class="container mx-auto px-4 py-8" x-data="programManager()">
+                <!-- Header Section -->
+                <div class="text-center mb-12 fade-in">
+                    <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+                        Manajemen Program
+                    </h1>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Kelola program-program Yayasan Al-Khoir dengan mudah dan efisien
+                    </p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover-lift transition-all">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Total Program</p>
+                                <p class="text-3xl font-bold text-gray-900" x-text="programs.length">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-list text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover-lift transition-all">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Program Aktif</p>
+                                <p class="text-3xl font-bold text-green-600" x-text="activeProgramsCount">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover-lift transition-all">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Kategori</p>
+                                <p class="text-3xl font-bold text-purple-600" x-text="categories.length">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-tags text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 mb-8 justify-center">
+                    <button @click="openModal('create')" 
+                            data-action="new-program"
+                            class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover-lift transition-all flex items-center gap-3">
+                        <i class="fas fa-plus text-lg"></i>
+                        Tambah Program Baru
+                    </button>
+                    <button @click="openModal('category')" 
+                            class="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover-lift transition-all flex items-center gap-3">
+                        <i class="fas fa-tags text-lg"></i>
+                        Kelola Kategori
+                    </button>
+                    <button @click="exportToCSV()" 
+                            class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover-lift transition-all flex items-center gap-3">
+                        <i class="fas fa-download text-lg"></i>
+                        Export CSV
+                    </button>
+                    <button @click="printPrograms()" 
+                            class="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover-lift transition-all flex items-center gap-3">
+                        <i class="fas fa-print text-lg"></i>
+                        Cetak
+                    </button>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
+                    <div class="flex flex-col lg:flex-row gap-4">
+                        <div class="flex-1">
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" x-model="searchQuery" 
+                                    placeholder="Cari program..." 
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <select x-model="statusFilter" class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <option value="">Semua Status</option>
+                                <option value="active">Aktif</option>
+                                <option value="inactive">Nonaktif</option>
+                            </select>
+                            <select x-model="categoryFilter" class="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <option value="">Semua Kategori</option>
+                                <template x-for="category in categories" :key="category">
+                                    <option :value="category" x-text="category"></option>
+                                </template>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Results Summary -->
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <p class="text-sm text-gray-600">
+                            Menampilkan <span class="font-semibold" x-text="filteredPrograms.length"></span> dari <span class="font-semibold" x-text="programs.length"></span> program
+                            <span x-show="searchQuery || statusFilter || categoryFilter" x-text="` (difilter)`"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Programs Table -->
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                    <!-- Loading State -->
+                    <div x-show="loading" class="p-12 text-center">
+                        <div class="inline-flex items-center gap-3">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                            <span class="text-gray-600">Memuat data program...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Table Content -->
+                    <div x-show="!loading" class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                                <tr>
+                                    <th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Program</th>
+                                    <th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Kategori</th>
+                                    <th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                                    <th class="hidden md:table-cell px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tanggal Dibuat</th>
+                                    <th class="px-4 md:px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <template x-for="program in filteredPrograms" :key="program.id">
+                                    <tr class="hover:bg-gray-50 transition-all duration-200">
+                                        <td class="px-4 md:px-6 py-4">
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center mr-3 md:mr-4">
+                                                    <i class="fas fa-graduation-cap text-blue-600 text-sm md:text-base"></i>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <div class="font-semibold text-gray-900 text-sm md:text-base truncate" x-text="program.name"></div>
+                                                    <div class="text-xs md:text-sm text-gray-500 truncate" x-text="program.description || 'Tidak ada deskripsi'"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 md:px-6 py-4">
+                                            <span class="inline-flex items-center px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium bg-purple-100 text-purple-800" x-text="program.category"></span>
+                                        </td>
+                                        <td class="px-4 md:px-6 py-4">
+                                            <span :class="program.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" 
+                                                class="inline-flex items-center px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium" x-text="program.status === 'active' ? 'Aktif' : 'Nonaktif'"></span>
+                                        </td>
+                                        <td class="hidden md:table-cell px-6 py-4 text-sm text-gray-500" x-text="formatDate(program.created_at)"></td>
+                                        <td class="px-4 md:px-6 py-4">
+                                            <div class="flex justify-end gap-1 md:gap-2">
+                                                <button @click="editProgram(program)" 
+                                                        class="p-1.5 md:p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all" 
+                                                        title="Edit Program">
+                                                    <i class="fas fa-edit text-sm md:text-base"></i>
+                                                </button>
+                                                <button @click="toggleStatus(program)" 
+                                                        :class="program.status === 'active' ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50'"
+                                                        class="p-1.5 md:p-2 rounded-lg transition-all" 
+                                                        :title="program.status === 'active' ? 'Nonaktifkan' : 'Aktifkan'">
+                                                    <i :class="program.status === 'active' ? 'fas fa-toggle-off' : 'fas fa-toggle-on'" class="text-sm md:text-base"></i>
+                                                </button>
+                                                <button @click="deleteProgram(program)" 
+                                                        class="p-1.5 md:p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all" 
+                                                        title="Hapus Program">
+                                                    <i class="fas fa-trash text-sm md:text-base"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div x-show="filteredPrograms.length === 0" class="text-center py-12">
+                        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-folder-open text-gray-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Tidak ada program ditemukan</h3>
+                        <p class="text-gray-500 mb-4">Coba ubah filter pencarian atau tambah program baru.</p>
+                        <button @click="openModal('create')" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-all">
+                            Tambah Program Pertama
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Create/Edit Program Modal -->
+                <div x-show="showModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+                    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
                         </div>
                         
-                        <form @submit.prevent="saveProgram()" class="space-y-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Nama Program</label>
-                                <input type="text" x-model="form.name" required
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                       placeholder="Masukkan nama program">
+                        <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full scale-in">
+                            <div class="bg-white px-6 py-4">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-2xl font-bold text-gray-900" x-text="editingProgram ? 'Edit Program' : 'Tambah Program Baru'"></h3>
+                                    <button @click="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                                        <i class="fas fa-times text-xl"></i>
+                                    </button>
+                                </div>
+                                
+                                <form @submit.prevent="saveProgram()" class="space-y-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Program</label>
+                                        <input type="text" x-model="form.name" required
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            placeholder="Masukkan nama program">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
+                                        <textarea x-model="form.description" rows="3"
+                                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                                placeholder="Deskripsi program (opsional)"></textarea>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+                                        <select x-model="form.category" required
+                                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                            <option value="">Pilih kategori</option>
+                                            <template x-for="category in categories" :key="category">
+                                                <option :value="category" x-text="category"></option>
+                                            </template>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                        <select x-model="form.status" required
+                                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                            <option value="active">Aktif</option>
+                                            <option value="inactive">Nonaktif</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Program (Opsional)</label>
+                                        <input type="file" @change="handleImageUpload" accept="image/*"
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                    </div>
+                                    
+                                    <div class="flex justify-end gap-3 pt-4">
+                                        <button type="button" @click="closeModal()"
+                                                class="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all">
+                                            Batal
+                                        </button>
+                                        <button type="submit"
+                                                class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2">
+                                            <i class="fas fa-save"></i>
+                                            <span x-text="editingProgram ? 'Update' : 'Simpan'"></span>
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
-                                <textarea x-model="form.description" rows="3"
-                                          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                          placeholder="Deskripsi program (opsional)"></textarea>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
-                                <select x-model="form.category" required
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                                    <option value="">Pilih kategori</option>
-                                    <template x-for="category in categories" :key="category">
-                                        <option :value="category" x-text="category"></option>
-                                    </template>
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                                <select x-model="form.status" required
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                                    <option value="active">Aktif</option>
-                                    <option value="inactive">Nonaktif</option>
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Program (Opsional)</label>
-                                <input type="file" @change="handleImageUpload" accept="image/*"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                            </div>
-                            
-                            <div class="flex justify-end gap-3 pt-4">
-                                <button type="button" @click="closeModal()"
-                                        class="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all">
-                                    Batal
-                                </button>
-                                <button type="submit"
-                                        class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2">
-                                    <i class="fas fa-save"></i>
-                                    <span x-text="editingProgram ? 'Update' : 'Simpan'"></span>
-                                </button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Category Management Modal -->
-        <div x-show="showCategoryModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-                </div>
-                
-                <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full scale-in">
-                    <div class="bg-white px-6 py-4">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-2xl font-bold text-gray-900">Kelola Kategori</h3>
-                            <button @click="closeCategoryModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                                <i class="fas fa-times text-xl"></i>
-                            </button>
+                <!-- Category Management Modal -->
+                <div x-show="showCategoryModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+                    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
                         </div>
                         
-                        <div class="space-y-4">
-                            <div class="flex gap-2">
-                                <input type="text" x-model="newCategory" 
-                                       placeholder="Nama kategori baru"
-                                       class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                                <button @click="addCategory()" 
-                                        class="px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            
-                            <div>
-                                <h4 class="font-medium text-gray-900 mb-3">Kategori yang tersedia:</h4>
-                                <div class="flex flex-wrap gap-2">
-                                    <template x-for="category in categories" :key="category">
-                                        <span class="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm">
-                                            <span x-text="category"></span>
-                                            <button @click="removeCategory(category)" 
-                                                    class="text-red-500 hover:text-red-700 transition-colors">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </span>
-                                    </template>
+                        <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full scale-in">
+                            <div class="bg-white px-6 py-4">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-2xl font-bold text-gray-900">Kelola Kategori</h3>
+                                    <button @click="closeCategoryModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                                        <i class="fas fa-times text-xl"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex gap-2">
+                                        <input type="text" x-model="newCategory" 
+                                            placeholder="Nama kategori baru"
+                                            class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                        <button @click="addCategory()" 
+                                                class="px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 mb-3">Kategori yang tersedia:</h4>
+                                        <div class="flex flex-wrap gap-2">
+                                            <template x-for="category in categories" :key="category">
+                                                <span class="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm">
+                                                    <span x-text="category"></span>
+                                                    <button @click="removeCategory(category)" 
+                                                            class="text-red-500 hover:text-red-700 transition-colors">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-end pt-6">
+                                    <button @click="closeCategoryModal()"
+                                            class="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all">
+                                        Tutup
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="flex justify-end pt-6">
-                            <button @click="closeCategoryModal()"
-                                    class="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all">
-                                Tutup
-                            </button>
+                    </div>
+                </div>
+
+                <!-- Toast Notifications -->
+                <div x-show="showToast" x-cloak 
+                    class="fixed top-4 right-4 z-50 bg-white rounded-xl shadow-lg border border-gray-200 p-4 max-w-sm slide-in" 
+                    style="display: none;">
+                    <div class="flex items-center gap-3">
+                        <div :class="toastType === 'success' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'" 
+                            class="w-8 h-8 rounded-full flex items-center justify-center">
+                            <i :class="toastType === 'success' ? 'fas fa-check' : 'fas fa-exclamation-triangle'"></i>
                         </div>
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-900" x-text="toastMessage"></p>
+                        </div>
+                        <button @click="hideToast()" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Toast Notifications -->
-        <div x-show="showToast" x-cloak 
-             class="fixed top-4 right-4 z-50 bg-white rounded-xl shadow-lg border border-gray-200 p-4 max-w-sm slide-in" 
-             style="display: none;">
-            <div class="flex items-center gap-3">
-                <div :class="toastType === 'success' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'" 
-                     class="w-8 h-8 rounded-full flex items-center justify-center">
-                    <i :class="toastType === 'success' ? 'fas fa-check' : 'fas fa-exclamation-triangle'"></i>
-                </div>
-                <div class="flex-1">
-                    <p class="font-medium text-gray-900" x-text="toastMessage"></p>
-                </div>
-                <button @click="hideToast()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
+        <!-- End Main Content -->
     </div>
 
     <script>

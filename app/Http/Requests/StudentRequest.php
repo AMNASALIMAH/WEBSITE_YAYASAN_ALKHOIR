@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StudentRequest extends FormRequest
 {
@@ -17,13 +16,11 @@ class StudentRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'nis' => 'required|string|max:20|unique:students,nis,' . ($this->student ?? ''),
+            'nis' => 'required|string|max:20',
             'nama_lengkap' => 'required|string|max:255',
             'nama_panggilan' => 'nullable|string|max:100',
             'tempat_lahir' => 'required|string|max:255',
