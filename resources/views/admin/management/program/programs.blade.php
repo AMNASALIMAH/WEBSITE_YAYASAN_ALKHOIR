@@ -84,11 +84,11 @@
                                 class="ml-4 space-y-1 hidden"
                                 onmouseenter="openMenu('tentangKamiMenu', 'tentangKamiChevron')" 
                                 onmouseleave="openMenu('tentangKamiMenu', 'tentangKamiChevron')">
-                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.sejarah.*') ? 'bg-gray-200' : '' }}">📖
+                                <a href="/admin/sejarah" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.sejarah.*') ? 'bg-gray-200' : '' }}">📖
                                     Sejarah</a>
-                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.visimisi.*') ? 'bg-gray-200' : '' }}">🎯
+                                <a href="/admin/visi-misi" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.visimisi.*') ? 'bg-gray-200' : '' }}">🎯
                                     Visi-Misi & Tujuan</a>
-                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.struktur.*') ? 'bg-gray-200' : '' }}">👥
+                                <a href="/admin/struktur-organisasi" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.struktur.*') ? 'bg-gray-200' : '' }}">👥
                                     Struktur</a>
                             </div>
                         </div>
