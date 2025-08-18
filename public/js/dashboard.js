@@ -55,7 +55,7 @@ function showToast(message, type = 'info') {
     const toastContainer = document.getElementById('toastContainer');
     if (!toastContainer) {
         console.warn('Toast container not found, falling back to alert');
-        alert(message);
+        // alert(message);
         return;
     }
     
@@ -109,7 +109,9 @@ document.addEventListener('DOMContentLoaded', function() {
             button.closest('form').action.includes('income') ||
             button.closest('form').action.includes('expense') ||
             button.closest('form').action.includes('store') ||
-            button.closest('form').action.includes('update')
+            button.closest('form').action.includes('update') ||
+            button.closest('form').action.includes('sejarah') ||
+            button.closest('form').action.includes('admin')
         )) {
             return;
         }
@@ -120,7 +122,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         button.addEventListener('click', function() {
-            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
             this.disabled = true;
         });
     });

@@ -48,12 +48,12 @@
                         <select id="category" name="category" required
                                 class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 @error('category') border-red-500 @enderror">
                             <option value="">Pilih Kategori</option>
-                            <option value="Operasional" {{ old('category', $expense->category) == 'Operasional' ? 'selected' : '' }}>Operasional</option>
-                            <option value="Gaji" {{ old('category', $expense->category) == 'Gaji' ? 'selected' : '' }}>Gaji</option>
-                            <option value="Utilitas" {{ old('category', $expense->category) == 'Utilitas' ? 'selected' : '' }}>Utilitas</option>
-                            <option value="Maintenance" {{ old('category', $expense->category) == 'Maintenance' ? 'selected' : '' }}>Maintenance</option>
-                            <option value="Pendidikan" {{ old('category', $expense->category) == 'Pendidikan' ? 'selected' : '' }}>Pendidikan</option>
-                            <option value="Lainnya" {{ old('category', $expense->category) == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                            <option value="operasional" {{ old('category', $expense->category) == 'operasional' ? 'selected' : '' }}>Operasional</option>
+                            <option value="gaji" {{ old('category', $expense->category) == 'gaji' ? 'selected' : '' }}>Gaji</option>
+                            <option value="utilitas" {{ old('category', $expense->category) == 'utilitas' ? 'selected' : '' }}>Utilitas</option>
+                            <option value="maintenance" {{ old('category', $expense->category) == 'maintenance' ? 'selected' : '' }}>Maintenance</option>
+                            <option value="pendidikan" {{ old('category', $expense->category) == 'pendidikan' ? 'selected' : '' }}>Pendidikan</option>
+                            <option value="lainnya" {{ old('category', $expense->category) == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
                         </select>
                         @error('category')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

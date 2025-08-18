@@ -55,9 +55,9 @@
                     >
                         <a href="{{ route('admin.sejarah.index') }}" class="block font-semibold  text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.sejarah.*') ? 'bg-gray-200' : '' }}">📖
                             Sejarah</a>
-                        <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">🎯
+                        <a href="{{ route('admin.visi_misi.index') }}" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">🎯
                             Visi-Misi & Tujuan</a>
-                        <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">👥
+                        <a href="{{ route('admin.struktur_organisasi.index') }}" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">👥
                             Struktur</a>
                     </div>
                 </div>

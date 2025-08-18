@@ -55,6 +55,8 @@ class DatabaseSeeder extends Seeder
             FinanceSppSettingSeeder::class,
             ProgramSeeder::class,
             YayasanTableSeeder::class,
+            VisiMisiSeeder::class,
+            StrukturOrganisasiSeeder::class,
         ]);
         
         // Create sample messages for testing

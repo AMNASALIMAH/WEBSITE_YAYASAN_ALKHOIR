@@ -7,9 +7,12 @@ use App\Http\Controllers\Admin\TeacherController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+use App\Http\Controllers\Dashboard;
+
+Route::get('/', [Dashboard::class, 'welcome'])->name('user_welcome');
+Route::get('/Visi-Misi', [Dashboard::class, 'about'])->name('visi-misi');
+Route::get('/Sejarah-singkat', [Dashboard::class, 'sejarah'])->name('sejarah');
+Route::get('/Struktur-Organisasi', [Dashboard::class, 'struktur_organisasi'])->name('struktur_organisasi');
 
 
 
@@ -19,6 +22,9 @@ require __DIR__.'/program.php';
 require __DIR__.'/kontak.php';
 require __DIR__.'/dashboard.php';
 require __DIR__.'/yayasan.php';
+require __DIR__.'/visi_misi.php';
+require __DIR__.'/struktur_organisasi.php';
+
 
 
 
@@ -109,15 +115,8 @@ Route::get('/Daftar PMB Alkhoir', function () {
 })->name('daftar_pmb');
 
 // tentang kami
-Route::get('/Sejarah-singkat', function () {
-    return view('tentang_kami.sejarah');
-})->name('sejarah');
-Route::get('/Visi-Misi', function () {
-    return view('tentang_kami.Visi-Misi');
-})->name('visi-misi');
-Route::get('/Struktur Organisasi', function () {
-    return view('tentang_kami.struktur_organisasi');
-})->name('struktur_organisasi');
+
+
 
 // Program - SD Tahfidz Alkhoir
 Route::get('/SD Tahfidz Al-Khoir', function () {

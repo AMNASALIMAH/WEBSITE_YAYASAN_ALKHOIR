@@ -56,12 +56,12 @@
                     <label for="categoryFilter" class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
                     <select id="categoryFilter" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200">
                         <option value="">Semua Kategori</option>
-                        <option value="Operasional">Operasional</option>
-                        <option value="Gaji">Gaji</option>
-                        <option value="Utilitas">Utilitas</option>
-                        <option value="Maintenance">Maintenance</option>
-                        <option value="Pendidikan">Pendidikan</option>
-                        <option value="Lainnya">Lainnya</option>
+                        <option value="operasional">Operasional</option>
+                        <option value="gaji">Gaji</option>
+                        <option value="utilitas">Utilitas</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="pendidikan">Pendidikan</option>
+                        <option value="lainnya">Lainnya</option>
                     </select>
                 </div>
 
@@ -221,12 +221,12 @@
                         <select id="category" name="category" required
                                 class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200">
                             <option value="">Pilih Kategori</option>
-                            <option value="Operasional">Operasional</option>
-                            <option value="Gaji">Gaji</option>
-                            <option value="Utilitas">Utilitas</option>
-                            <option value="Maintenance">Maintenance</option>
-                            <option value="Pendidikan">Pendidikan</option>
-                            <option value="Lainnya">Lainnya</option>
+                            <option value="operasional">Operasional</option>
+                            <option value="gaji">Gaji</option>
+                            <option value="utilitas">Utilitas</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="pendidikan">Pendidikan</option>
+                            <option value="lainnya">Lainnya</option>
                         </select>
                     </div>
                 </div>

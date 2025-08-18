@@ -123,7 +123,7 @@ class FinanceController extends Controller
     {
         $request->validate([
             'expense_title' => 'required|string|max:255',
-            'category' => 'required|string|max:100',
+            'category' => 'required|in:operasional,gaji,utilitas,maintenance,pendidikan,lainnya',
             'amount' => 'required|numeric|min:0',
             'expense_date' => 'required|date',
             'receipt_number' => 'required|string|max:255',
@@ -133,6 +133,7 @@ class FinanceController extends Controller
         ]);
 
         $data = $request->all();
+        $data['category'] = strtolower($data['category']);
         $data['created_by'] = auth()->user()->name;
         
         FinanceExpense::create($data);
@@ -150,7 +151,7 @@ class FinanceController extends Controller
     {
         $request->validate([
             'expense_title' => 'required|string|max:255',
-            'category' => 'required|string|max:100',
+            'category' => 'required|in:operasional,gaji,utilitas,maintenance,pendidikan,lainnya',
             'amount' => 'required|numeric|min:0',
             'expense_date' => 'required|date',
             'receipt_number' => 'required|string|max:255',
@@ -159,7 +160,10 @@ class FinanceController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        $expense->update($request->all());
+        $data = $request->all();
+        $data['category'] = strtolower($data['category']);
+
+        $expense->update($data);
         
         return redirect()->route('admin.management.finance.pengeluaran')
             ->with('success', 'Data pengeluaran berhasil diperbarui');

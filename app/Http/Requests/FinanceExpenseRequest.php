@@ -25,7 +25,7 @@ class FinanceExpenseRequest extends FormRequest
             'expense_title' => 'required|string|max:255',
             'description' => 'required|string',
             'amount' => 'required|numeric|min:0',
-            'category' => 'required|in:operasional,gaji,utilitas,maintenance,lainnya',
+            'category' => 'required|in:operasional,gaji,utilitas,maintenance,pendidikan,lainnya',
             'expense_date' => 'required|date',
             'receipt_number' => 'nullable|string|max:255',
             'status' => 'required|in:pending,approved,rejected',

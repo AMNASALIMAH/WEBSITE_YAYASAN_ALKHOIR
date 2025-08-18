@@ -1,4 +1,4 @@
-<x-landingpage>
+
     <x-landingpage>
 
         <!-- Hero Section -->
@@ -19,9 +19,8 @@
             </div>
         </section>
 
-
-        <!-- Konten Sejarah -->
-        <<main class="flex-1 bg-white py-16 px-4 md:px-20 text-gray-800">
+        <!-- Konten Struktur Organisasi -->
+        <main class="flex-1 bg-white py-16 px-4 md:px-20 text-gray-800">
             <section class="bg-white py-12 max-w-6xl mx-auto px-4">
                 {{-- Judul --}}
                 <div class="text-center mb-20 ">
@@ -34,45 +33,50 @@
                     </h2>
                 </div>
 
+                @php
+                    // Find Ketua
+                    $ketua = $strukturOrganisasi->firstWhere('jabatan', 'Ketua Yayasan');
+                    // Get others except Ketua
+                    $timLain = $strukturOrganisasi->filter(function($item) {
+                        return $item->jabatan !== 'Ketua Yayasan';
+                    });
+                @endphp
 
                 {{-- Ketua --}}
+                @if($ketua)
                 <div class="text-center mb-12">
                     <img class="mx-auto h-65 w-64 rounded-xl object-cover"
-                        src="{{ asset('assets/images/struktural/ketua.png') }}" alt="Ketua">
-                    <h3 class="mt-4 text-xl font-semibold text-gray-900">Dr.Muhammad Zaedi M.Ag</h3>
-                    <p class="text-gray-500">Ketua Yayasan</p>
+                        @if($ketua->foto)
+                            src="{{ Storage::url($ketua->foto) }}"
+                        @else
+                            src="{{ asset('assets/images/struktural/ketua.png') }}"
+                        @endif
+                        alt="Ketua">
+                    <h3 class="mt-4 text-xl font-semibold text-gray-900">{{ $ketua->nama }}</h3>
+                    <p class="text-gray-500">{{ $ketua->jabatan }}</p>
                 </div>
-
+                @endif
 
                 {{-- Tim Lain --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-                    {{-- Person 1 --}}
-                    <div class="text-center">
-                        <img class="mx-auto h-48 w-48 rounded-xl object-cover"
-                            src="{{ asset('assets/images/struktur/lindsay.jpg') }}" alt="Lindsay Walton">
-                        <h3 class="mt-4 text-lg font-semibold text-gray-900">Lindsay Walton</h3>
-                        <p class="text-gray-500">Sekretaris</p>
-                    </div>
-
-                    {{-- Person 2 --}}
-                    <div class="text-center">
-                        <img class="mx-auto h-48 w-48 rounded-xl object-cover"
-                            src="{{ asset('assets/images/struktur/courtney.jpg') }}" alt="Courtney Henry">
-                        <h3 class="mt-4 text-lg font-semibold text-gray-900">Courtney Henry</h3>
-                        <p class="text-gray-500">Bendahara</p>
-                    </div>
-
-                    {{-- Person 3 --}}
-                    <div class="text-center">
-                        <img class="mx-auto h-48 w-48 rounded-xl object-cover"
-                            src="{{ asset('assets/images/struktur/tom.jpg') }}" alt="Tom Cook">
-                        <h3 class="mt-4 text-lg font-semibold text-gray-900">Tom Cook</h3>
-                        <p class="text-gray-500">Penanggung Jawab</p>
-                    </div>
+                    @forelse($timLain as $person)
+                        <div class="text-center">
+                            <img class="mx-auto h-48 w-48 rounded-xl object-cover"
+                                @if($person->foto)
+                                    src="{{ Storage::url($person->foto) }}"
+                                @else
+                                    src="{{ asset('assets/images/struktur/default.png') }}"
+                                @endif
+                                alt="{{ $person->nama }}">
+                            <h3 class="mt-4 text-lg font-semibold text-gray-900">{{ $person->nama }}</h3>
+                            <p class="text-gray-500">{{ $person->jabatan }}</p>
+                        </div>
+                    @empty
+                        <div class="col-span-3 text-center text-gray-500">Belum ada data struktural lainnya.</div>
+                    @endforelse
                 </div>
             </section>
-            </main>
+        </main>
 
     </x-landingpage>
 
-</x-landingpage>

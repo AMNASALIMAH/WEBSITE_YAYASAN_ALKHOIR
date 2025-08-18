@@ -196,6 +196,31 @@
             transition: background-color 0.2s ease-in-out;
         }
 
+        /* Additional interactive animations */
+        .group-hover\:rotate-12:hover {
+            transform: rotate(12deg);
+        }
+
+        .group-hover\:shake:hover {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+
+        /* Card hover effects */
+        .hover\:-translate-y-1:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Focus ring improvements */
+        .focus\:ring-offset-2:focus {
+            box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px currentColor;
+        }
+
         /* Focus states for accessibility */
         .focus\:ring-2:focus {
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);

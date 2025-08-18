@@ -51,7 +51,7 @@
 
             <nav class="space-y-2 text-sm flex-1">
 
-                <a href=""
+                <a href="/dashboard"
                     class="flex items-center gap-2 font-semibold text-white hover:bg-white hover:text-blue-950">
                     <x-heroicon-o-home class="w-4 h-4" /> Dashboard
                 </a>
@@ -130,13 +130,13 @@
                                 onmouseenter="openMenu('informasiMenu', 'informasiChevron')" 
                                 onmouseleave="openMenu('informasiMenu', 'informasiChevron')"
                             >
-                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.berita.*') ? 'bg-gray-200' : '' }}">🗞️
+                                <a href="/admin/news" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.berita.*') ? 'bg-gray-200' : '' }}">🗞️
                                     Berita</a>
                                 <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.pmb.*') ? 'bg-gray-200' : '' }}">📥
                                     PMB</a>
                                 <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.agenda.*') ? 'bg-gray-200' : '' }}">📅
                                     Agenda</a>
-                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.galeri.*') ? 'bg-gray-200' : '' }}">🖼️
+                                <a href="/admin/galery" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.galeri.*') ? 'bg-gray-200' : '' }}">🖼️
                                     Galeri</a>
                             </div>
                         </div>
@@ -158,7 +158,7 @@
                         onmouseenter="openMenu('manajemenMenu', 'manajemenChevron')" 
                         onmouseleave="openMenu('manajemenMenu', 'manajemenChevron')"
                     >
-                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.profile.*') ? 'bg-gray-200' : '' }}">🏛️ Profil Yayasan</a>
+                        <a href="/admin/management/profile/yayasan" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.profile.*') ? 'bg-gray-200' : '' }}">🏛️ Profil Yayasan</a>
                 
                         <div>
                             <button type="button"
@@ -184,8 +184,8 @@
                                         onmouseenter="openMenu('guruMenu', 'guruChevron')" 
                                         onmouseleave="openMenu('guruMenu', 'guruChevron')"
                                     >
-                                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.guru.*') ? 'bg-gray-200' : '' }}">📋 Daftar Guru</a>
-                                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.guru.kelas.*') ? 'bg-gray-200' : '' }}">🏫 Kelas Guru</a>
+                                        <a href="/admin/management/teachers" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.guru.*') ? 'bg-gray-200' : '' }}">📋 Daftar Guru</a>
+                                        <a href="#" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.guru.kelas.*') ? 'bg-gray-200' : '' }}">🏫 Kelas Guru</a>
                                     </div>
                                 </div>
                                 <div>
@@ -200,7 +200,7 @@
                                         onmouseenter="openMenu('santriMenu', 'santriChevron')" 
                                         onmouseleave="openMenu('santriMenu', 'santriChevron')"
                                     >
-                                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.santri.*') ? 'bg-gray-200' : '' }}">📋 Daftar Santri</a>
+                                        <a href="/admin/management/students" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.santri.*') ? 'bg-gray-200' : '' }}">📋 Daftar Santri</a>
                                         <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.santri.create') ? 'bg-gray-200' : '' }}">➕ Tambah Santri</a>
                                         <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.santri.kelas.*') ? 'bg-gray-200' : '' }}">🏫 Kelas / Tingkatan</a>
                                         <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.santri.alumni.*') ? 'bg-gray-200' : '' }}">📦 Alumni / Keluar</a>
@@ -221,30 +221,52 @@
                                 onmouseenter="openMenu('keuanganMenu', 'keuanganChevron')" 
                                 onmouseleave="openMenu('keuanganMenu', 'keuanganChevron')"
                             >
-                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.keuangan.laporan.*') ? 'bg-gray-200' : '' }}">📊 Laporan Keuangan</a>
-                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.keuangan.pemasukan.*') ? 'bg-gray-200' : '' }}">💵 Pemasukan</a>
-                                <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.keuangan.pengeluaran.*') ? 'bg-gray-200' : '' }}">💸 Pengeluaran</a>
+                                <a href="/admin/management/finance" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.keuangan.laporan.*') ? 'bg-gray-200' : '' }}">📊 Laporan Keuangan</a>
+                                <a href="/admin/management/finance/pemasukan" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.keuangan.pemasukan.*') ? 'bg-gray-200' : '' }}">💵 Pemasukan</a>
+                                <a href="/admin/management/finance/pengeluaran" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.keuangan.pengeluaran.*') ? 'bg-gray-200' : '' }}">💸 Pengeluaran</a>
                             </div>
                         </div>
-                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.account.profile') ? 'bg-gray-200' : '' }}">👤 Perbarui Akun Profil</a>
-                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.messages.*') ? 'bg-gray-200' : '' }}">✉️ Pesan Masuk</a>
-                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.applications.*') ? 'bg-gray-200' : '' }}">📝 Formulir Masuk</a>
-                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.accounts.*') ? 'bg-gray-200' : '' }}">🧑‍💼 Data Akun Pengurus</a>
-                        <a href="" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.programs.*') ? 'bg-gray-200' : '' }}">📚 Data Program</a>
+                        <a href="/admin/management/admin-accounts" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.account.profile') ? 'bg-gray-200' : '' }}">👤 Perbarui Akun Profil</a>
+                        <a href="/admin/management/messages" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.messages.*') ? 'bg-gray-200' : '' }}">✉️ Pesan Masuk</a>
+                        <a href="/admin/management/applications" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.applications.*') ? 'bg-gray-200' : '' }}">📝 Formulir Masuk</a>
+                        <a href="/admin/management/admin-accounts" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.accounts.*') ? 'bg-gray-200' : '' }}">🧑‍💼 Data Akun Pengurus</a>
+                        <a href="/admin/management/programs/content" class="block font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.programs.*') ? 'bg-gray-200' : '' }}">📚 Data Program</a>
                     </div>
                 </div>
 
                 <!-- Kontak -->
-                <a href=""
+                <a href="#"
                     class="flex items-center gap-2 font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.kontak.*') ? 'bg-gray-200' : '' }}">
                     <x-heroicon-o-phone class="w-4 h-4" /> Kontak
                 </a>
 
                 <!-- Pengguna -->
-                <a href=""
+                <a href="#"
                     class="flex items-center gap-2 font-semibold text-white hover:bg-white hover:text-blue-950 {{ request()->routeIs('admin.users.*') ? 'bg-gray-200' : '' }}">
                     <x-heroicon-o-users class="w-4 h-4" /> Pengguna
                 </a>
+                <div class="mt-8 mb-4 px-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-white rounded-full h-10 w-10 flex items-center justify-center text-blue-900 font-bold text-lg uppercase">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        </div>
+                        <div>
+                            <div class="font-semibold text-white text-base">{{ Auth::user()->name }}</div>
+                            <div class="text-xs text-blue-200">Admin</div>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex flex-col gap-1">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 text-sm text-blue-200 hover:text-white hover:underline">
+                            <x-heroicon-o-user class="w-4 h-4" /> Profil Saya
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="flex items-center gap-2 text-sm text-blue-200 hover:text-white hover:underline w-full text-left">
+                                <x-heroicon-o-arrow-left-on-rectangle class="w-4 h-4" /> Keluar
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </nav>
         </aside>
         <script>
