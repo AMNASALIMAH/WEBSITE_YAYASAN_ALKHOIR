@@ -78,12 +78,14 @@
                         @mouseenter="open = true" 
                         @mouseleave="open = true"
                     >
-                        <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">🏷️
-                            Kategori</a>
-                        <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">📄
-                            Daftar</a>
-                        <a href="#" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">📝
-                            Konten</a>
+                        <a href="{{ route('admin.management.majelis-talim-alkhoir.content') }}" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">🏷️
+                            majelis ta'lim alkhoir</a>
+                        <a href="{{ route('admin.management.rtq-alkhoir.content') }}" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">📄
+                            RTQ Alkhoir</a>
+                        <a href="{{ route('admin.management.sd-tahfidz-alkhoir.content') }}" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">📝
+                            SD tahfidz Alkhoir</a>
+                        <a href="{{ route('admin.management.mahasantri-alkhoir.content') }}" class="block font-semibold  text-white hover:bg-white hover:text-blue-950">📝
+                            Mahasantri Alkhoir</a>
                     </div>
                 </div>
 

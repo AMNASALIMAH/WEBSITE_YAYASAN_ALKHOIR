@@ -24,6 +24,7 @@ require __DIR__.'/dashboard.php';
 require __DIR__.'/yayasan.php';
 require __DIR__.'/visi_misi.php';
 require __DIR__.'/struktur_organisasi.php';
+require __DIR__.'/program_majelis.php';
 
 
 
