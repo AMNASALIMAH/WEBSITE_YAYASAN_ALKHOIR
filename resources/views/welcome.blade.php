@@ -17,7 +17,7 @@
     <div class="relative z-10 -mt-12 px-4 md:px-20">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {{-- Kotak 1 --}}
-            <a href="{{ url('/program/majelis') }}" class="block">
+            <a href="{{ url('/MajelisTalimAl-Khoir') }}" class="block">
                 <div
                     class="bg-white border-2 border-blue-900 p-6 rounded-xl shadow-lg flex items-center gap-4 hover:shadow-xl hover:-translate-y-1 transition">
                     <img src="{{ asset('assets/images/logo2.png') }}" alt="Majelis Icon" class="w-10 h-10" />
@@ -26,7 +26,7 @@
             </a>
 
             {{-- Kotak 2 --}}
-            <a href="{{ url('/program/rumah-tahfidz') }}" class="block">
+            <a href="{{ url('/MahasantriAl-Khoir') }}" class="block">
                 <div
                     class="bg-white border-2 border-blue-900 p-6 rounded-xl shadow-lg flex items-center gap-4 hover:shadow-xl hover:-translate-y-1 transition">
                     <img src="{{ asset('assets/images/anak ngaji.png') }}" alt="Rumah Icon" class="w-10 h-10" />
@@ -44,11 +44,11 @@
 
                 {{-- Kotak 4 --}}
 
-                <a href="{{ url('/program/sd-tahfidz') }}" class="block">
+                <a href="{{ url('/RTQAlKhoir') }}" class="block">
                     <div
                         class="bg-white border-2 border-blue-900 p-6 rounded-xl shadow-lg flex items-center gap-4 hover:shadow-xl hover:-translate-y-1 transition">
                         <img src="{{ asset('assets/images/sd.png') }}" alt="SD Icon" class="w-10 h-10" />
-                        <p class="font-semibold">Sekolah Dasar Tahfidz</p>
+                        <p class="font-semibold">RTQ Al-Khoir</p>
                     </div>
                 </a>
         </div>

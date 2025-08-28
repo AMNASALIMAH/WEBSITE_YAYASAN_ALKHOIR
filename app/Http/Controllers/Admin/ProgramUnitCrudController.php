@@ -44,6 +44,13 @@ class ProgramUnitCrudController extends Controller
     public function create(string $type)
     {
         $this->ensureValidType($type);
+        
+        // Check if data already exists for this type
+        if (ProgramUnit::where('type', $this->normalizeType($type))->exists()) {
+            return redirect()->route('admin.management.program_unit.index', $type)
+                ->with('error', 'Data untuk jenis ini sudah ada. Anda hanya dapat menambahkan satu data per jenis.');
+        }
+        
         return view('admin.management.program_unit.create', [
             'type' => $type,
             'typeLabel' => $this->allowedTypes[$type],

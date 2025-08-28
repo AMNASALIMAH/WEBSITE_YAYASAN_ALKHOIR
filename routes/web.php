@@ -116,28 +116,28 @@ Route::get('/Daftar PMB Alkhoir', function () {
 })->name('daftar_pmb');
 
 // tentang kami
+use App\Http\Controllers\SDTahfidzAlKhoirController;
+use App\Http\Controllers\RTQAlKhoirController;
+use App\Http\Controllers\MahasantriAlkhoirController;
+use App\Http\Controllers\MajelisTalimAlKhoirController;
+
+
 
 
 
 // Program - SD Tahfidz Alkhoir
-Route::get('/SD Tahfidz Al-Khoir', function () {
-    return view('program.sdt_alkhoir.deskripsi');
-})->name('SDT');
+
+Route::get('/SDTahfidzAl-Khoir', [SDTahfidzAlKhoirController::class, 'showSDT'])->name('SDT');
 
 //Program -  RTQ Alkhoir
-Route::get('RTQ Al-Khoir', function () {
-    return view('program.rtq_alkhoir.deskripsi');
-})->name('RTQ');
+Route::get('/RTQAlKhoir', [RTQAlKhoirController::class, 'showRTQ'])->name('RTQ');
 
 //Program - Mahasantri Alkhoir
-Route::get('Mahasantri Al-Khoir', function () {
-    return view('program.mhs_alkhoir.deskripsi');
-})->name('MHS');
+Route::get('/MahasantriAl-Khoir', [MahasantriAlkhoirController::class, 'showMHS'])->name('MHS');
 
 //Program - MT Alkhhoir
-Route::get('Majelis Talim Al-Khoir', function () {
-    return view('program.mt_alkhoir.deskripsi');
-})->name('MT');
+Route::get('/MajelisTalimAl-Khoir', [MajelisTalimAlKhoirController::class, 'showMT'])->name('MT');
+
 Route::get('/Galeri', function () {
     return view('galeri.galeri');
 })->name('galeri');
